@@ -1,0 +1,50 @@
+/* ── Robin · Typography tokens ────────────────────────────────────
+   Type ramp from the Robin "DS_ Core" Figma (default mode).
+   Base UI text is 14/22. Headings H1–H5 use the brand face.
+   Weights: normal 400, strong/medium 500 (Robin rarely uses 700 in UI).
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Font sizes */
+  --fs-sm:   12px;   /* small / captions */
+  --fs-base: 14px;   /* body, controls */
+  --fs-lg:   16px;   /* large body */
+  --fs-xl:   20px;
+  --fs-h5:   16px;
+  --fs-h4:   18px;
+  --fs-h3:   22px;
+  --fs-h2:   26px;
+  --fs-h1:   30px;
+  --fs-display: 48px;  /* page/section titles in specimen docs */
+
+  /* Line heights */
+  --lh-sm:   20px;
+  --lh-base: 22px;
+  --lh-lg:   24px;
+  --lh-h5:   24px;
+  --lh-h4:   26px;
+  --lh-h3:   28px;
+  --lh-h2:   32px;
+  --lh-h1:   34px;
+
+  /* Weights */
+  --fw-normal: 400;  /* @kind font */
+  --fw-medium: 500;  /* @kind font */
+  --fw-bold:   700;  /* @kind font */
+
+  /* Letter spacing */
+  --ls-tight: -0.01em;  /* @kind other */
+  --ls-normal: 0;       /* @kind other */
+}
+
+/* Optional helper classes — use the tokens directly in components,
+   these are conveniences for specimen cards and docs. */
+.robin-h1 { font-family: var(--font-brand); font-weight: var(--fw-medium); font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--ls-tight); color: var(--text-primary); }
+.robin-h2 { font-family: var(--font-brand); font-weight: var(--fw-medium); font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: var(--ls-tight); color: var(--text-primary); }
+.robin-h3 { font-family: var(--font-brand); font-weight: var(--fw-medium); font-size: var(--fs-h3); line-height: var(--lh-h3); color: var(--text-primary); }
+.robin-h4 { font-family: var(--font-brand); font-weight: var(--fw-medium); font-size: var(--fs-h4); line-height: var(--lh-h4); color: var(--text-primary); }
+.robin-h5 { font-family: var(--font-brand); font-weight: var(--fw-medium); font-size: var(--fs-h5); line-height: var(--lh-h5); color: var(--text-primary); }
+.robin-body    { font-family: var(--font-brand); font-weight: var(--fw-normal); font-size: var(--fs-base); line-height: var(--lh-base); color: var(--text-body); }
+.robin-body-lg { font-family: var(--font-brand); font-weight: var(--fw-normal); font-size: var(--fs-lg);   line-height: var(--lh-lg);   color: var(--text-body); }
+.robin-caption { font-family: var(--font-brand); font-weight: var(--fw-normal); font-size: var(--fs-sm);   line-height: var(--lh-sm);   color: var(--text-muted); }
+.robin-mono    { font-family: var(--font-mono);  font-size: var(--fs-base); line-height: var(--lh-base); }

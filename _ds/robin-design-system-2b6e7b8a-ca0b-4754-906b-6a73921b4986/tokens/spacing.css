@@ -1,0 +1,38 @@
+/* ── Robin · Spacing, sizing, radius tokens ───────────────────────
+   Ant-based 4px scale (sizeunit = 4, step = 4) from the Robin Figma.
+   Control heights drive buttons / inputs / selects.
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Spacing scale (xxs → xxl) */
+  --space-xxs: 4px;
+  --space-xs:  8px;
+  --space-sm:  12px;
+  --space-md:  16px;   /* base unit */
+  --space-ml:  20px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-xxl: 48px;
+
+  /* Control / element heights */
+  --control-h-xs: 24px;
+  --control-h-sm: 28px;
+  --control-h:    32px;   /* default control height */
+  --control-h-lg: 40px;
+
+  /* Horizontal padding inside controls */
+  --control-pad-x:    12px;
+  --control-pad-x-sm: 8px;
+
+  /* Border radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius:    4px;   /* default — buttons, inputs, tags */
+  --radius-lg: 8px;   /* cards, popovers, modals */
+  --radius-xl: 12px;
+  --radius-pill: 999px;
+
+  /* Border widths */
+  --border-w:       1px;
+  --border-w-focus: 2px;
+}

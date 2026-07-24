@@ -1,0 +1,124 @@
+/* ── Robin · Color tokens ─────────────────────────────────────────
+   Two layers:
+   1) PRIMITIVES — the raw Robin palette ramps (magenta, blue, red,
+      green, gold, gray) + the deep-plum brand ink.
+   2) SEMANTIC ALIASES — role-based tokens that components reference.
+   Values resolved from the Robin "DS_ Core" Figma variable set.
+   Robin's accent is MAGENTA (#BE1F77), not the #9747FF Figma chrome.
+   ------------------------------------------------------------------ */
+
+:root {
+  /* ── Brand ink ── */
+  --robin-plum: #550331;          /* logo bird body, deepest brand ink */
+  --robin-plum-gradient-from: #4D0132;
+  --robin-plum-gradient-to:   #991760;
+
+  /* ── Magenta (primary / accent) ── */
+  --magenta-1:   #FFF0F6;
+  --magenta-2:   #F2C2D6;
+  --magenta-3:   #E693B8;
+  --magenta-4:   #D9689F;
+  --magenta-5:   #CC4189;
+  --magenta-6:   #BE1F77;   /* PRIMARY */
+  --magenta-7:   #991760;   /* pressed */
+  --magenta-8:   #730749;
+  --magenta-100: #A81F6B;
+
+  /* ── Blue (info / links / selection) ── */
+  --blue-1:   #F0FAFF;
+  --blue-2:   #CEE6F5;
+  --blue-3:   #9ECAE8;
+  --blue-4:   #72AEDB;
+  --blue-5:   #4A91CF;
+  --blue-6:   #2774C1;   /* INFO / link */
+  --blue-7:   #17559C;
+  --blue-8:   #0C3975;
+
+  /* ── Red (negative / danger) ── */
+  --red-1:   #FFF1F0;
+  --red-2:   #FFCAC2;
+  --red-3:   #FFA399;
+  --red-6:   #E81C1C;   /* DANGER */
+  --red-7:   #C20E14;
+  --red-8:   #9C020D;
+
+  /* ── Green (positive / success) ── */
+  --green-1:   #F0F5E6;
+  --green-2:   #E1E8D5;
+  --green-3:   #C5DBA7;
+  --green-5:   #8DC255;
+  --green-6:   #72B433;   /* SUCCESS */
+  --green-7:   #528F21;
+  --green-8:   #376913;
+
+  /* ── Gold (warning) ── */
+  --gold-1:   #FFFBE6;
+  --gold-5:   #FFC53D;
+  --gold-6:   #FDBA31;   /* WARNING */
+  --gold-7:   #D48806;
+
+  /* ── Neutrals (Robin refined "global" gray ramp) ── */
+  --white:    #FFFFFF;
+  --gray-5:   #F7F6F6;
+  --gray-10:  #EEEDED;
+  --gray-20:  #DCDADA;
+  --gray-30:  #CBC9C9;
+  --gray-40:  #ABA8A8;
+  --gray-50:  #8C8989;
+  --gray-70:  #626060;
+  --gray-80:  #484747;
+  --gray-90:  #3E3D3D;
+  --gray-100: #2A2A2A;
+  --gray-110: #1F1F1F;
+  --gray-120: #0C0C0C;
+  --black:    #000000;
+
+  /* ── SEMANTIC: text ── */
+  --text-primary:   var(--gray-110);   /* headings, primary copy */
+  --text-secondary: var(--gray-100);
+  --text-body:      var(--gray-90);
+  --text-muted:     var(--gray-70);    /* captions, descriptions */
+  --text-disabled:  var(--gray-50);
+  --text-on-fill:   var(--white);      /* text on solid brand/danger */
+  --text-link:      var(--blue-6);
+  --text-accent:    var(--magenta-6);
+
+  /* ── SEMANTIC: surfaces ── */
+  --surface-page:      var(--gray-5);   /* app canvas */
+  --surface-card:      var(--white);    /* cards, panels, menus */
+  --surface-sunken:    var(--gray-10);
+  --surface-hover:     var(--gray-5);
+  --surface-accent:    var(--magenta-1);
+  --surface-info:      var(--blue-1);
+  --surface-success:   var(--green-1);
+  --surface-warning:   var(--gold-1);
+  --surface-danger:    var(--red-1);
+
+  /* ── SEMANTIC: borders ── */
+  --border-subtle:   var(--gray-10);
+  --border-default:  var(--gray-20);
+  --border-strong:   var(--gray-30);
+  --border-pressed:  var(--gray-40);
+  --border-focus:    var(--magenta-6);
+
+  /* ── SEMANTIC: fills (interactive) ── */
+  --fill-primary:           var(--magenta-6);
+  --fill-primary-hover:     var(--magenta-5);
+  --fill-primary-pressed:   var(--magenta-7);
+  --fill-primary-disabled:  var(--magenta-3);
+  --fill-secondary:         var(--gray-5);
+  --fill-secondary-pressed: var(--gray-10);
+  --fill-tertiary:          var(--gray-10);
+  --fill-selected:          var(--blue-6);
+
+  /* ── SEMANTIC: status foreground ── */
+  --icon-default:  var(--gray-70);
+  --icon-muted:    var(--gray-50);
+  --color-success: var(--green-6);
+  --color-warning: var(--gold-6);
+  --color-danger:  var(--red-6);
+  --color-info:    var(--blue-6);
+
+  /* ── Focus ring ── */
+  --focus-ring: 0 0 0 2px var(--magenta-2);
+}

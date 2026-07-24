@@ -1,0 +1,32 @@
+/* ── Robin · Effects (shadows) ────────────────────────────────────
+   Soft, low-contrast elevation built from layered black alphas
+   (0.02 / 0.03 / 0.05 / 0.08 / 0.12) — the values most used across
+   the Robin Figma. Shadows are subtle: Robin leans on hairline
+   borders for structure and reserves shadow for floating surfaces.
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Resting card — barely-there lift, usually paired with a border */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+
+  /* Raised card / hoverable tile */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02);
+
+  /* Dropdowns, popovers, selects */
+  --shadow-md:
+    0 3px 6px -4px rgba(0,0,0,0.12),
+    0 6px 16px rgba(0,0,0,0.08),
+    0 9px 28px 8px rgba(0,0,0,0.05);
+
+  /* Modals, drawers */
+  --shadow-lg:
+    0 6px 16px -8px rgba(0,0,0,0.12),
+    0 9px 28px rgba(0,0,0,0.05),
+    0 12px 48px 16px rgba(0,0,0,0.03);
+
+  /* Hairline "inset border" used on doc tables / wells */
+  --shadow-hairline: inset 0 0 0 1px var(--border-default);
+
+  /* Focus ring (also in colors.css as --focus-ring) */
+  --shadow-focus: 0 0 0 2px var(--magenta-2);
+}

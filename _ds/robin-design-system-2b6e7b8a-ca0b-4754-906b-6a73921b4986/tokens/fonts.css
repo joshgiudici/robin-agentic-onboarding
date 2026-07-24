@@ -1,0 +1,41 @@
+/* ── Robin · Webfonts ─────────────────────────────────────────────
+   Robin's production interface typeface is **Brown LL** (Lineto), a
+   warm geometric sans used across the entire product UI (not just
+   display). Its secondary UI face is **SF Pro Text**. Both are
+   commercial / system fonts and are NOT bundled here.
+
+   → UPLOAD the real font files: once Brown LL (and optionally SF Pro
+     Text) .woff2 files are added, drop an @font-face block here and
+     the tokens below render pixel-faithfully. Until then the tokens
+     keep pointing at the real family names and fall back to a
+     geometric-grotesque system stack — no substitute family is
+     hard-coded in their place.
+
+   The monospace face is **Space Mono** (Google Fonts), matching the
+   .fig's code/spec usage — bundled below.
+   ------------------------------------------------------------------ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* When the user uploads Brown LL, register it here, e.g.:
+   @font-face {
+     font-family: "Brown LL";
+     src: url("../assets/fonts/BrownLL-Regular.woff2") format("woff2");
+     font-weight: 400; font-style: normal; font-display: swap;
+   }
+   …plus Medium (500) and Bold (700) faces. */
+
+:root {
+  /* Brand / primary interface face — Brown LL (falls back to a
+     geometric-grotesque system stack until the file is uploaded) */
+  --font-brand: "Brown LL", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Secondary UI face — SF Pro Text (Apple system stack fallback) */
+  --font-ui: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Monospace — Space Mono (bundled) */
+  --font-mono: "Space Mono", "DM Mono", "Courier Prime", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Default body font family for the system */
+  --font-sans: var(--font-brand);
+}
