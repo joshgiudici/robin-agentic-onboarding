@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./floor-planning-overlay.css">
 <script src="./support.js"></script>
+<script src="./floor-planning-overlay.js"></script>
 </head>
 <body>
 <x-dc>
@@ -22,11 +24,55 @@
     a:hover { color: var(--blue-5); }
     @keyframes rb-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes rb-dot { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+    @keyframes rb-spin { to { transform: rotate(360deg); } }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--gray-30); border-radius: 4px; }
   </style>
 </helmet>
 <div style="width:100vw;height:100vh;background:var(--surface-page);font-family:var(--font-brand, 'Brown LL', sans-serif);display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;">
+
+  <div style="flex:1;display:flex;overflow:hidden;min-height:0;">
+    <div style="width:240px;flex:none;display:flex;flex-direction:column;box-sizing:border-box;padding:16px 0 8px;background-color:#021029;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 20px;">
+        <img src="assets/robin-logo-white.png" alt="Robin" style="height:20px;">
+        <svg viewBox="0 0 320 512" width="10" height="10" style="color:rgba(255,255,255,.5);"><path fill="currentColor" d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"></path></svg>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:1px;padding:0 8px;">
+        <sc-for list="{{ navPrimary }}" as="nav" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,.82);">
+            <span style="width:16px;height:16px;flex:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.72);">
+              <svg viewBox="{{ nav.viewBox }}" width="14" height="14"><path fill="currentColor" d="{{ nav.icon }}"></path></svg>
+            </span>
+            <span style="flex:1;font-family:var(--font-brand);font-size:var(--fs-base);color:rgba(255,255,255,.9);">{{ nav.label }}</span>
+            <sc-if value="{{ nav.hasChevron }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 512 512" width="9" height="9" style="color:rgba(255,255,255,.45);flex:none;"><path fill="currentColor" d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path></svg>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <div style="display:flex;flex-direction:column;gap:1px;padding:0 8px;">
+        <sc-for list="{{ navSecondary }}" as="nav" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:6px;cursor:pointer;background:{{ nav.bg }};">
+            <span style="width:16px;height:16px;flex:none;display:flex;align-items:center;justify-content:center;color:{{ nav.iconColor }};">
+              <svg viewBox="{{ nav.viewBox }}" width="14" height="14"><path fill="currentColor" d="{{ nav.icon }}"></path></svg>
+            </span>
+            <span style="flex:1;font-family:var(--font-brand);font-size:var(--fs-base);color:{{ nav.color }};font-weight:{{ nav.fontWeight }};">{{ nav.label }}</span>
+          </div>
+        </sc-for>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;margin-top:4px;border-top:1px solid rgba(255,255,255,.1);cursor:pointer;">
+          <span style="width:24px;height:24px;border-radius:50%;flex:none;background:#8B5CF6;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-brand);font-size:11px;font-weight:var(--fw-medium);">TY</span>
+          <span style="flex:1;font-family:var(--font-brand);font-size:var(--fs-base);color:rgba(255,255,255,.9);">Tiffany Yu</span>
+          <svg viewBox="0 0 320 512" width="9" height="9" style="color:rgba(255,255,255,.45);flex:none;"><path fill="currentColor" d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"></path></svg>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;">
 
   <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:36px;">
@@ -40,13 +86,13 @@
       </div>
       <div style="width:100%;max-width:640px;display:flex;flex-direction:column;gap:16px;">
         <div style="display:flex;align-items:flex-end;gap:8px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:12px;padding:10px 10px 10px 18px;box-shadow:var(--shadow-md);">
-          <textarea value="{{ draft }}" onChange="{{ onDraftChange }}" onKeyDown="{{ onComposerKeyDown }}" placeholder="Add my users, set up my buildings, upload my maps…" rows="1" style="flex:1;border:none;outline:none;resize:none;background:transparent;font-family:var(--font-brand);font-size:var(--fs-lg);line-height:24px;color:var(--text-primary);padding:6px 0;max-height:120px;"></textarea>
+          <textarea value="{{ draft }}" onChange="{{ onDraftChange }}" onKeyDown="{{ onComposerKeyDown }}" placeholder="Add users or upload floor maps…" rows="1" style="flex:1;border:none;outline:none;resize:none;background:transparent;font-family:var(--font-brand);font-size:var(--fs-lg);line-height:24px;color:var(--text-primary);padding:6px 0;max-height:120px;"></textarea>
           <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.IconButton" onClick="{{ send }}" aria-label="Send" style="background:var(--fill-primary);color:var(--white);border-radius:50%;flex:none;" hint-size="32px,32px">
             <svg viewBox="0 0 384 512" width="14" height="14"><path fill="currentColor" d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.3V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.3l105.4 105.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path></svg>
           </x-import>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
-          <sc-for list="{{ landingChips }}" as="chip" hint-placeholder-count="3">
+          <sc-for list="{{ landingChips }}" as="chip" hint-placeholder-count="2">
             <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
           </sc-for>
         </div>
@@ -100,19 +146,6 @@
             </sc-if>
           </sc-if>
 
-          <sc-if value="{{ isBuildingsModal }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;flex-direction:column;gap:12px;">
-              <sc-for list="{{ modalBuildings }}" as="bld" hint-placeholder-count="1">
-                <div style="border:1px solid var(--border-subtle);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:8px;">
-                  <div style="display:flex;align-items:center;justify-content:space-between;">
-                    <span class="robin-body" style="font-weight:var(--fw-medium);color:var(--text-primary);">{{ bld.name }}</span>
-                  </div>
-                  <div class="robin-caption">{{ bld.floorCount }}</div>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
-
           <sc-if value="{{ isMapsModal }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:16px;">
               <sc-for list="{{ modalBuildings }}" as="bld" hint-placeholder-count="1">
@@ -121,7 +154,7 @@
                   <sc-for list="{{ bld.floors }}" as="flr" hint-placeholder-count="2">
                     <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--gray-5);border-radius:6px;">
                       <div style="display:flex;flex-direction:column;">
-                        <span class="robin-body" style="color:var(--text-body);">Floor {{ flr.n }}</span>
+                        <span class="robin-body" style="color:var(--text-body);">{{ flr.label }}</span>
                         <sc-if value="{{ flr.isDone }}" hint-placeholder-val="{{ false }}">
                           <span class="robin-caption">{{ flr.statsLabel }}</span>
                         </sc-if>
@@ -139,32 +172,6 @@
     </sc-if>
 
     <div style="flex:1;display:flex;overflow:hidden;min-height:0;">
-      <div style="width: 240px; flex: none; display: flex; flex-direction: column; box-sizing: border-box; padding: 20px 0; background-color: #04224F">
-        <div style="display:flex;align-items:center;padding:0 20px 22px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:20px;">
-          <img src="assets/robin-logo-white.png" alt="Robin" style="height:20px;">
-        </div>
-        <div style="padding:0 20px 12px;">
-          <span style="font-family:var(--font-brand);font-size:var(--fs-lg);font-weight:var(--fw-medium);color:var(--white);">Getting started</span>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px;">
-          <sc-for list="{{ steps }}" as="step" hint-placeholder-count="3">
-            <div onClick="{{ step.onClick }}" style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;cursor:{{ step.cursor }};transition:background-color .15s ease;" style-hover="{{ step.hoverStyle }}">
-              <span style="width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:{{ step.dotBg }};color:{{ step.dotColor }};border:{{ step.dotBorder }};box-sizing:border-box;">
-                <sc-if value="{{ step.done }}" hint-placeholder-val="{{ false }}">
-                  <svg viewBox="0 0 448 512" width="11" height="11"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>
-                </sc-if>
-              </span>
-              <span class="robin-body" style="font-size:var(--fs-base);color:{{ step.textColor }};font-weight:{{ step.fontWeight }};">{{ step.label }}</span>
-            </div>
-          </sc-for>
-        </div>
-        <div style="flex:1;"></div>
-        <div onClick="{{ resetAll }}" style="display:flex;align-items:center;gap:8px;padding:10px 20px;cursor:pointer;color:rgba(255,255,255,.55);">
-          <svg viewBox="0 0 512 512" width="14" height="14" style="flex:none;"><path fill="currentColor" d="M105.1 202.6c17.7-17.7 41.7-27.6 66.7-27.6H384v96c0 6.5 3.9 12.3 9.9 14.8s12.9 1.1 17.4-3.5l112-112c6.2-6.2 6.2-16.4 0-22.6l-112-112c-4.5-4.6-11.4-5.9-17.4-3.5S384 40.5 384 47v96H171.8C130.4 143 90.7 159.4 61.4 188.7 32.1 218 15.7 257.7 15.7 299V416c0 13.3 10.7 24 24 24s24-10.7 24-24V299c0-25 9.9-49 27.4-66.7z"></path></svg>
-          <span style="font-family:var(--font-brand);font-size:var(--fs-sm);">Restart setup</span>
-        </div>
-      </div>
-
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
     <div ref="{{ scrollRef }}" style="flex:1;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;">
       <div style="width:100%;max-width:760px;box-sizing:border-box;margin:0 auto;padding:28px 24px 64px;display:flex;flex-direction:column;gap:22px;">
@@ -197,6 +204,59 @@
                     <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
                   </sc-for>
                 </div>
+              </sc-if>
+
+              <sc-if value="{{ m.isOptimize }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="520px,280px" style="width:520px;max-width:100%;">
+                  <div style="display:flex;flex-direction:column;gap:20px;">
+                    <div class="rb-field">
+                      <label class="rb-field__label">What best describes your organization's office space strategy?</label>
+                      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                        <sc-for list="{{ m.card.spaceStrategyOptions }}" as="opt" hint-placeholder-count="3">
+                          <div onClick="{{ opt.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};cursor:{{ m.card.cursor }};">
+                            <span style="width:16px;height:16px;border-radius:50%;flex:none;box-sizing:border-box;border:2px solid {{ opt.dotBorder }};display:flex;align-items:center;justify-content:center;">
+                              <span style="width:8px;height:8px;border-radius:50%;background:{{ opt.dotFill }};"></span>
+                            </span>
+                            <span class="robin-body" style="color:var(--text-primary);">{{ opt.label }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <div class="rb-field">
+                      <label class="rb-field__label">Do you plan to have most people assigned to desks, or more of a hybrid work culture?</label>
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+                        <sc-for list="{{ m.card.workCultureOptions }}" as="opt" hint-placeholder-count="5">
+                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="{{ opt.variant }}" onClick="{{ opt.onClick }}" hint-size="auto,32px">{{ opt.label }}</x-import>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <div class="rb-field">
+                      <label class="rb-field__label">How should Robin handle people who aren't using their assigned or booked resources?</label>
+                      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                        <sc-for list="{{ m.card.unusedPolicyOptions }}" as="opt" hint-placeholder-count="3">
+                          <div onClick="{{ opt.onClick }}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};cursor:{{ m.card.cursor }};">
+                            <span style="width:16px;height:16px;border-radius:50%;flex:none;margin-top:2px;box-sizing:border-box;border:2px solid {{ opt.dotBorder }};display:flex;align-items:center;justify-content:center;">
+                              <span style="width:8px;height:8px;border-radius:50%;background:{{ opt.dotFill }};"></span>
+                            </span>
+                            <span class="robin-body" style="color:var(--text-primary);">{{ opt.label }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <sc-if value="{{ m.card.showActions }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onSave }}" hint-size="auto,32px">Save settings</x-import>
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ m.card.onSkip }}" hint-size="auto,32px">Maybe later</x-import>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ m.card.isDone }}" hint-placeholder-val="{{ false }}">
+                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" dot="{{ true }}" hint-size="auto,22px">Settings saved</x-import>
+                    </sc-if>
+                  </div>
+                </x-import>
               </sc-if>
 
               <sc-if value="{{ m.isCsv }}" hint-placeholder-val="{{ false }}">
@@ -239,7 +299,9 @@
                         </tbody>
                       </table>
                       <div class="robin-caption">and 42 more</div>
-                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onContinue }}" hint-size="auto,32px">Looks good, continue</x-import>
+                      <sc-if value="{{ m.card.showContinue }}" hint-placeholder-val="{{ true }}">
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onContinue }}" hint-size="auto,32px">Looks good, continue</x-import>
+                      </sc-if>
                     </div>
                   </sc-if>
                 </x-import>
@@ -278,88 +340,6 @@
                 </x-import>
               </sc-if>
 
-              <sc-if value="{{ m.isBuildingsForm }}" hint-placeholder-val="{{ false }}">
-                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="440px,160px" style="width:440px;max-width:100%;">
-                  <div style="display:flex;flex-direction:column;gap:14px;">
-                    <sc-for list="{{ m.card.rows }}" as="row" hint-placeholder-count="1">
-                      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
-                        <div class="rb-field" style="flex:1;min-width:160px;">
-                          <label class="rb-field__label">Building name</label>
-                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Input" value="{{ row.name }}" onChange="{{ row.onNameChange }}" placeholder="Headquarters" hint-size="100%,32px"></x-import>
-                        </div>
-                        <div class="rb-field" style="width:90px;">
-                          <label class="rb-field__label">Floors</label>
-                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Input" type="number" value="{{ row.floors }}" onChange="{{ row.onFloorsChange }}" placeholder="4" hint-size="100%,32px"></x-import>
-                        </div>
-                        <sc-if value="{{ row.canRemove }}" hint-placeholder-val="{{ false }}">
-                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.IconButton" onClick="{{ row.onRemove }}" aria-label="Remove" hint-size="32px,32px">
-                            <svg viewBox="0 0 384 512" width="12" height="12"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
-                          </x-import>
-                        </sc-if>
-                      </div>
-                    </sc-for>
-                    <div style="display:flex;gap:8px;">
-                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="text" size="sm" onClick="{{ m.card.onAddRow }}" hint-size="auto,28px">+ Add another building</x-import>
-                    </div>
-                    <div>
-                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onSubmit }}" hint-size="auto,32px">Create buildings</x-import>
-                    </div>
-                  </div>
-                </x-import>
-              </sc-if>
-
-              <sc-if value="{{ m.isBuildingCards }}" hint-placeholder-val="{{ false }}">
-                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="420px,140px" style="width:420px;max-width:100%;">
-                  <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div class="robin-body" style="font-weight:var(--fw-medium);color:var(--text-primary);">{{ m.card.headline }}</div>
-                    <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;">
-                      <sc-for list="{{ m.card.buildingsData }}" as="bld" hint-placeholder-count="1">
-                        <li class="robin-body" style="color:var(--text-body);">
-                          <span style="font-weight:var(--fw-medium);color:var(--text-primary);">{{ bld.name }}</span>
-                          <span class="robin-caption"> ({{ bld.floorLabel }})</span>
-                        </li>
-                      </sc-for>
-                    </ul>
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                      <sc-for list="{{ m.card.chips }}" as="chip" hint-placeholder-count="2">
-                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
-                      </sc-for>
-                    </div>
-                  </div>
-                </x-import>
-              </sc-if>
-
-              <sc-if value="{{ m.isMapsPerFloor }}" hint-placeholder-val="{{ false }}">
-                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="480px,160px" style="width:480px;max-width:100%;">
-                  <div style="display:flex;flex-direction:column;gap:16px;">
-                    <sc-for list="{{ m.card.buildingsData }}" as="bld" hint-placeholder-count="1">
-                      <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div class="robin-body" style="font-weight:var(--fw-medium);color:var(--text-primary);">{{ bld.name }}</div>
-                        <sc-for list="{{ bld.floors }}" as="flr" hint-placeholder-count="2">
-                          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--gray-5);border-radius:6px;">
-                            <div style="display:flex;flex-direction:column;">
-                              <span class="robin-body" style="color:var(--text-body);">Floor {{ flr.n }}</span>
-                              <sc-if value="{{ flr.isDone }}" hint-placeholder-val="{{ false }}">
-                                <span class="robin-caption">{{ flr.statsLabel }}</span>
-                              </sc-if>
-                            </div>
-                            <sc-if value="{{ flr.isDone }}" hint-placeholder-val="{{ false }}">
-                              <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" dot="{{ true }}" hint-size="auto,22px">{{ flr.fileName }}</x-import>
-                            </sc-if>
-                            <sc-if value="{{ flr.isPending }}" hint-placeholder-val="{{ true }}">
-                              <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" size="sm" onClick="{{ flr.onUpload }}" hint-size="auto,28px">Upload</x-import>
-                            </sc-if>
-                          </div>
-                        </sc-for>
-                      </div>
-                    </sc-for>
-                    <div>
-                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onFinish }}" hint-size="auto,32px">That's all my maps for now</x-import>
-                    </div>
-                  </div>
-                </x-import>
-              </sc-if>
-
               <sc-if value="{{ m.isMapsBulk }}" hint-placeholder-val="{{ false }}">
                 <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="480px,160px" style="width:480px;max-width:100%;">
                   <sc-if value="{{ m.card.isIdle }}" hint-placeholder-val="{{ true }}">
@@ -368,79 +348,105 @@
                       <div class="robin-caption">or click to browse — CAD, PDF, or a screenshot works</div>
                     </div>
                   </sc-if>
+                  <sc-if value="{{ m.card.isAnalyzing }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:12px;padding:6px 0;">
+                      <div class="robin-body" style="font-weight:var(--fw-medium);color:var(--text-primary);">Analyzing your maps…</div>
+                      <div class="robin-caption">{{ m.card.analyzingStatus }}</div>
+                      <div style="height:6px;background:var(--gray-10);border-radius:999px;overflow:hidden;">
+                        <div style="height:100%;background:var(--fill-primary);width:{{ m.card.progressPct }};transition:width .2s ease;"></div>
+                      </div>
+                    </div>
+                  </sc-if>
                   <sc-if value="{{ m.card.isMatched }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;flex-direction:column;gap:14px;">
-                      <div style="display:flex;flex-direction:column;gap:6px;">
-                        <div class="robin-caption">Matched automatically</div>
-                        <sc-for list="{{ m.card.matchedView }}" as="mf" hint-placeholder-count="2">
-                          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">
-                            <span class="robin-body" style="color:var(--text-body);">{{ mf.name }}</span>
-                            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" hint-size="auto,22px">{{ mf.label }}</x-import>
-                          </div>
-                        </sc-for>
+                      <div class="robin-caption">I detected these from map content and filenames — edit anything before saving.</div>
+                      <div class="rb-field">
+                        <label class="rb-field__label">Building name</label>
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Input" value="{{ m.card.buildingName }}" onChange="{{ m.card.onBuildingNameChange }}" placeholder="Building name" hint-size="100%,32px"></x-import>
                       </div>
-                      <sc-if value="{{ m.card.hasUnmatched }}" hint-placeholder-val="{{ false }}">
                       <div style="display:flex;flex-direction:column;gap:10px;">
-                        <div class="robin-caption">Couldn't identify these — can you point me to the right floor?</div>
-                        <sc-for list="{{ m.card.unmatchedView }}" as="uf" hint-placeholder-count="1">
-                          <div style="display:flex;align-items:center;gap:8px;background:var(--gray-5);border-radius:6px;padding:8px 10px;flex-wrap:wrap;">
-                            <span class="robin-body" style="flex:1;min-width:0;color:var(--text-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ uf.name }}</span>
-                            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Select" options="{{ uf.buildingOptions }}" value="{{ uf.buildingValue }}" onChange="{{ uf.onBuildingChange }}" placeholder="Building" className="rb-w-140" hint-size="140px,32px"></x-import>
-                            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Select" options="{{ uf.floorOptions }}" value="{{ uf.floorValue }}" onChange="{{ uf.onFloorChange }}" placeholder="Floor" className="rb-w-100" hint-size="100px,32px"></x-import>
+                        <div class="robin-caption">Floor names</div>
+                        <sc-for list="{{ m.card.matchedView }}" as="mf" hint-placeholder-count="4">
+                          <div style="display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--gray-5);border-radius:8px;">
+                            <span class="robin-caption">{{ mf.fileName }}</span>
+                            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Input" value="{{ mf.floorLabel }}" onChange="{{ mf.onFloorLabelChange }}" placeholder="Floor name" hint-size="100%,32px"></x-import>
                           </div>
                         </sc-for>
                       </div>
-                      </sc-if>
                       <div>
-                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onConfirm }}" hint-size="auto,32px">Confirm assignments</x-import>
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onConfirm }}" hint-size="auto,32px">Save maps</x-import>
                       </div>
                     </div>
                   </sc-if>
                   <sc-if value="{{ m.card.isConfirmed }}" hint-placeholder-val="{{ false }}">
-                    <div style="display:flex;flex-direction:column;gap:6px;">
-                      <sc-for list="{{ m.card.finalView }}" as="ff" hint-placeholder-count="2">
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">
-                          <span class="robin-body" style="color:var(--text-body);">{{ ff.name }}</span>
-                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" hint-size="auto,22px">{{ ff.label }}</x-import>
-                        </div>
-                      </sc-for>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                      <div>
+                        <div class="robin-h4">{{ m.card.savedBuildingName }}</div>
+                        <div class="robin-caption">{{ m.card.savedSummary }}</div>
+                      </div>
+                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" dot="{{ true }}" hint-size="auto,22px">Saved</x-import>
                     </div>
                   </sc-if>
                 </x-import>
               </sc-if>
 
-              <sc-if value="{{ m.isCompletion }}" hint-placeholder-val="{{ false }}">
-                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="440px,180px" style="width:440px;max-width:100%;">
-                  <div style="display:flex;flex-direction:column;gap:16px;">
-                    <div class="robin-h4">Your workspace is ready</div>
-                    <div style="display:flex;gap:20px;flex-wrap:wrap;">
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.users }}</span>
-                        <span class="robin-caption">Users</span>
+              <sc-if value="{{ m.isMapThinking }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="480px,120px" style="width:480px;max-width:100%;">
+                  <div style="display:flex;flex-direction:column;gap:10px;">
+                    <sc-for list="{{ m.card.steps }}" as="st" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:10px;">
+                        <sc-if value="{{ st.isDone }}" hint-placeholder-val="{{ false }}">
+                          <span style="width:18px;height:18px;border-radius:50%;flex:none;background:var(--green-1, #E6F4EA);color:var(--green-6, #1E7E34);display:flex;align-items:center;justify-content:center;">
+                            <svg viewBox="0 0 448 512" width="9" height="9"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>
+                          </span>
+                        </sc-if>
+                        <sc-if value="{{ st.isActive }}" hint-placeholder-val="{{ true }}">
+                          <span style="width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--border-default);border-top-color:var(--fill-primary);animation:rb-spin .7s linear infinite;"></span>
+                        </sc-if>
+                        <sc-if value="{{ st.isPending }}" hint-placeholder-val="{{ false }}">
+                          <span style="width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--border-subtle);"></span>
+                        </sc-if>
+                        <span class="robin-body" style="color:{{ st.textColor }};">{{ st.label }}</span>
                       </div>
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.buildings }}</span>
-                        <span class="robin-caption">Buildings</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.floors }}</span>
-                        <span class="robin-caption">Floors</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.maps }}</span>
-                        <span class="robin-caption">Maps connected</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.desks }}</span>
-                        <span class="robin-caption">Desks detected</span>
-                      </div>
-                      <div style="display:flex;flex-direction:column;">
-                        <span class="robin-h3" style="color:var(--magenta-6);">{{ m.card.summary.rooms }}</span>
-                        <span class="robin-caption">Meeting rooms</span>
+                    </sc-for>
+                  </div>
+                </x-import>
+              </sc-if>
+
+              <sc-if value="{{ m.isMapDetection }}" hint-placeholder-val="{{ false }}">
+                <div style="width:520px;max-width:100%;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden;">
+                  <div style="padding:16px 18px 12px;">
+                    <div class="robin-h4" style="color:var(--text-primary);">{{ m.card.buildingName }}</div>
+                  </div>
+                  <sc-for list="{{ m.card.floors }}" as="fl" hint-placeholder-count="4">
+                    <div style="padding:14px 18px;border-top:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:10px;">
+                      <span class="robin-body" style="font-weight:var(--fw-bold, 600);color:var(--text-primary);">{{ fl.label }}</span>
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <sc-for list="{{ fl.tags }}" as="tg" hint-placeholder-count="4">
+                          <span style="display:inline-flex;align-items:center;padding:5px 10px;border-radius:6px;background:var(--gray-5, #F5F5F5);color:var(--text-body);font-family:var(--font-brand);font-size:var(--fs-sm);line-height:var(--lh-sm);">{{ tg.label }}</span>
+                        </sc-for>
                       </div>
                     </div>
-                    <div class="robin-caption">Next up: scenario planning — building-wide stack plans, department neighborhoods, and desk assignments.</div>
-                    <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ startPlanning }}" hint-size="auto,32px">Start planning your seating</x-import>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ m.isMapPreviews }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="480px,200px" style="width:480px;max-width:100%;">
+                  <div style="display:flex;flex-direction:column;gap:14px;">
+                    <div class="robin-caption">{{ m.card.previewCaption }}</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                      <sc-for list="{{ m.card.previewFloors }}" as="pf" hint-placeholder-count="4">
+                        <div onClick="{{ pf.onOpen }}" style="display:flex;flex-direction:column;gap:6px;cursor:pointer;">
+                          <div class="fp-mini-map" data-fp-mini="{{ pf.floorId }}"></div>
+                          <span class="robin-body" style="font-weight:var(--fw-medium);color:var(--text-primary);">{{ pf.floorLabel }}</span>
+                          <span class="robin-caption">{{ pf.fileName }} · Open floor plan</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ m.card.showContinue }}" hint-placeholder-val="{{ true }}">
+                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onContinue }}" hint-size="auto,32px">Looks good</x-import>
+                    </sc-if>
                   </div>
                 </x-import>
               </sc-if>
@@ -464,154 +470,8 @@
     </div>
   </sc-if>
 
-  <sc-if value="{{ isPlanning }}" hint-placeholder-val="{{ false }}">
-    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#0C0C0C;flex:none;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="robin-body" style="color:var(--gray-40);font-weight:var(--fw-medium);">{{ planningBuildingName }}</span>
-          <span style="color:var(--gray-50);">&gt;</span>
-          <span style="font-family:var(--font-brand);font-size:var(--fs-h4);font-weight:var(--fw-medium);color:var(--white);">{{ planningViewTitle }}</span>
-        </div>
-        <div style="display:flex;gap:4px;background:rgba(255,255,255,.06);padding:4px;border-radius:8px;">
-          <sc-for list="{{ planningTabs }}" as="tab" hint-placeholder-count="3">
-            <div onClick="{{ tab.onClick }}" style="padding:8px 16px;border-radius:6px;cursor:pointer;font-family:var(--font-brand);font-size:var(--fs-base);font-weight:var(--fw-medium);background:{{ tab.bg }};color:{{ tab.color }};">{{ tab.label }}</div>
-          </sc-for>
-        </div>
-      </div>
-
-      <div style="flex:1;display:flex;overflow:hidden;">
-        <div style="width:280px;flex:none;padding:20px;box-sizing:border-box;overflow-y:auto;border-right:1px solid var(--border-subtle);">
-          <sc-if value="{{ isStackplanView }}" hint-placeholder-val="{{ true }}">
-            <div class="robin-h5">{{ selectedFloorLabel }}</div>
-            <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
-              <sc-for list="{{ selectedFloorRows }}" as="row" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-                  <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;border-radius:3px;background:{{ row.color }};flex:none;"></span>
-                    <span class="robin-body" style="color:var(--text-body);">{{ row.label }}</span>
-                  </div>
-                  <input type="number" value="{{ row.count }}" onChange="{{ row.onChange }}" style="width:64px;height:32px;border:1px solid var(--border-default);border-radius:6px;text-align:center;font-family:var(--font-brand);font-size:var(--fs-base);">
-                </div>
-              </sc-for>
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <span style="width:12px;height:12px;border-radius:3px;background:var(--gray-20);flex:none;"></span>
-                  <span class="robin-body" style="color:var(--text-body);">Not allocated</span>
-                </div>
-                <span class="robin-body" style="color:var(--text-muted);">{{ selectedNotAllocated }}</span>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-subtle);">
-              <span class="robin-body" style="font-weight:var(--fw-medium);">Total</span>
-              <span class="robin-body" style="font-weight:var(--fw-medium);">{{ selectedTotal }}</span>
-            </div>
-          </sc-if>
-          <sc-if value="{{ isLeftListView }}" hint-placeholder-val="{{ false }}">
-            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Select" options="{{ floorOptions }}" value="{{ selectedFloorValue }}" onChange="{{ onFloorSelectChange }}" hint-size="100%,32px"></x-import>
-            <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
-              <sc-for list="{{ selectedFloorRows }}" as="row" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-                  <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="width:12px;height:12px;border-radius:3px;background:{{ row.color }};flex:none;"></span>
-                    <span class="robin-body" style="color:var(--text-body);">{{ row.label }}</span>
-                  </div>
-                  <span class="robin-body" style="color:var(--text-muted);">{{ row.count }}</span>
-                </div>
-              </sc-for>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-subtle);">
-              <span class="robin-body" style="font-weight:var(--fw-medium);">Total</span>
-              <span class="robin-body" style="font-weight:var(--fw-medium);">{{ selectedTotal }}</span>
-            </div>
-          </sc-if>
-        </div>
-
-        <div style="flex:1;overflow-y:auto;padding:24px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;">
-          <sc-for list="{{ planningFloorCards }}" as="fc" hint-placeholder-count="4">
-            <div onClick="{{ fc.onSelect }}" style="background:var(--surface-card);border-radius:8px;padding:18px;cursor:pointer;border-style:solid;border-color:{{ fc.borderColor }};border-width:{{ fc.borderWidth }};">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                <span class="robin-h5">{{ fc.label }}</span>
-                <span class="robin-caption">{{ fc.desksLabel }}</span>
-              </div>
-              <sc-if value="{{ isStackplanView }}" hint-placeholder-val="{{ true }}">
-                <div style="display:flex;height:32px;border-radius:6px;overflow:hidden;">
-                  <sc-for list="{{ fc.segments }}" as="seg" hint-placeholder-count="3">
-                    <div style="width:{{ seg.pct }}%;background:{{ seg.color }};" title="{{ seg.team }}"></div>
-                  </sc-for>
-                  <sc-if value="{{ fc.hasNotAllocated }}" hint-placeholder-val="{{ false }}">
-                    <div style="width:{{ fc.notAllocatedPct }}%;background:var(--gray-20);"></div>
-                  </sc-if>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;">
-                  <sc-for list="{{ fc.segments }}" as="seg" hint-placeholder-count="3">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                      <span style="width:9px;height:9px;border-radius:50%;background:{{ seg.color }};"></span>
-                      <span class="robin-caption">{{ seg.team }}</span>
-                    </div>
-                  </sc-for>
-                  <sc-if value="{{ fc.hasNotAllocated }}" hint-placeholder-val="{{ false }}">
-                    <div style="display:flex;align-items:center;gap:5px;">
-                      <span style="width:9px;height:9px;border-radius:50%;background:var(--gray-20);"></span>
-                      <span class="robin-caption">Not allocated</span>
-                    </div>
-                  </sc-if>
-                </div>
-              </sc-if>
-              <sc-if value="{{ isLeftListView }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-wrap:wrap;gap:14px;">
-                  <sc-for list="{{ fc.clusters }}" as="cl" hint-placeholder-count="3">
-                    <div style="display:flex;flex-direction:column;gap:6px;min-width:120px;">
-                      <span style="align-self:flex-start;background:var(--surface-card);border:1.5px solid {{ cl.color }};color:{{ cl.color }};border-radius:999px;padding:2px 10px;font-size:var(--fs-sm);font-weight:var(--fw-medium);">{{ cl.label }}</span>
-                      <div style="display:flex;flex-wrap:wrap;gap:4px;max-width:150px;">
-                        <sc-for list="{{ cl.dots }}" as="d" hint-placeholder-count="4">
-                          <span style="width:20px;height:20px;border-radius:50%;background:{{ cl.color }};display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:var(--fw-medium);">{{ d.initials }}</span>
-                        </sc-for>
-                        <sc-if value="{{ cl.hasExtra }}" hint-placeholder-val="{{ false }}">
-                          <span class="robin-caption">{{ cl.extraLabel }}</span>
-                        </sc-if>
-                      </div>
-                    </div>
-                  </sc-for>
-                </div>
-              </sc-if>
-            </div>
-          </sc-for>
-        </div>
-
-        <div style="width:320px;flex:none;border-left:1px solid var(--border-subtle);background:var(--surface-card);display:flex;flex-direction:column;">
-          <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;">
-            <sc-for list="{{ messages }}" as="m3" hint-placeholder-count="2">
-              <div style="display:flex;flex-direction:column;gap:8px;align-items:{{ m3.bubbleAlign }};">
-                <sc-if value="{{ m3.isTyping }}" hint-placeholder-val="{{ false }}">
-                  <div style="background:var(--gray-5);border-radius:12px;padding:10px 14px;display:flex;gap:4px;">
-                    <span style="width:5px;height:5px;border-radius:50%;background:var(--gray-40);animation:rb-dot 1.2s infinite;"></span>
-                    <span style="width:5px;height:5px;border-radius:50%;background:var(--gray-40);animation:rb-dot 1.2s .15s infinite;"></span>
-                    <span style="width:5px;height:5px;border-radius:50%;background:var(--gray-40);animation:rb-dot 1.2s .3s infinite;"></span>
-                  </div>
-                </sc-if>
-                <sc-if value="{{ m3.hasText }}" hint-placeholder-val="{{ false }}">
-                  <div style="background:{{ m3.bubbleBg }};border:{{ m3.bubbleBorder }};color:{{ m3.bubbleColor }};padding:9px 12px;border-radius:12px;font-size:var(--fs-sm);line-height:var(--lh-sm);max-width:100%;">{{ m3.text }}</div>
-                </sc-if>
-                <sc-if value="{{ m3.isChips }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:flex;flex-wrap:wrap;gap:6px;">
-                    <sc-for list="{{ m3.card.chips }}" as="chip" hint-placeholder-count="1">
-                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" size="sm" onClick="{{ chip.onClick }}" hint-size="auto,28px">{{ chip.label }}</x-import>
-                    </sc-for>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-for>
-          </div>
-          <div style="flex:none;border-top:1px solid var(--border-subtle);padding:12px;display:flex;align-items:flex-end;gap:6px;background:var(--gray-5);">
-            <textarea value="{{ draft }}" onChange="{{ onDraftChange }}" onKeyDown="{{ onComposerKeyDown }}" placeholder="Ask the agent…" rows="1" style="flex:1;border:none;outline:none;resize:none;background:transparent;font-family:var(--font-brand);font-size:var(--fs-sm);line-height:20px;color:var(--text-primary);padding:6px 0;max-height:80px;"></textarea>
-            <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.IconButton" size="sm" onClick="{{ send }}" aria-label="Send" style="background:var(--fill-primary);color:var(--white);border-radius:50%;flex:none;" hint-size="28px,28px">
-              <svg viewBox="0 0 384 512" width="11" height="11"><path fill="currentColor" d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.3V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.3l105.4 105.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path></svg>
-            </x-import>
-          </div>
-        </div>
-      </div>
     </div>
-  </sc-if>
+  </div>
 
 </div>
 
@@ -634,114 +494,12 @@ class Component extends DCLogic {
       usersMethod: null,
       usersPreviewRows: [],
       scimProvider: null,
-      buildingsDone: false,
       mapsDone: false,
+      mapsBuiltOut: false,
+      optimizeDone: false,
       modalKey: null,
-      planning: null,
+      pendingMapUploadId: null,
     };
-  }
-
-  teamColors = {
-    Support: '#1BA39C', Marketing: '#22B8CF', Sales: '#2E86DE', Engineering: '#6C5CE7',
-    Design: '#8E44AD', Product: '#C2185B', Finance: '#E64980', Compliance: '#E03131',
-    Legal: '#E8590C', Operations: '#F08C00', 'Business Development': '#94A80B',
-    HR: '#FAB005', 'Customer Success': '#F2C037', IT: '#12B886',
-  };
-  knownTeams = Object.keys(this.teamColors);
-  nameFirst = ['Alex', 'Jamie', 'Morgan', 'Taylor', 'Sam', 'Casey', 'Jordan', 'Riley', 'Drew', 'Skyler', 'Avery', 'Rowan', 'Quinn', 'Emerson', 'Reese', 'Harper', 'Finley', 'Sage', 'Dakota', 'Blake'];
-  nameLast = ['Rivera', 'Chen', 'Lee', 'Brooks', 'Patel', 'Kim', 'Nguyen', 'Garcia', 'Silva', 'Cohen', 'Okafor', 'Reyes', 'Novak', 'Haddad', 'Sato', 'Klein', 'Rossi', 'Dubois', 'Park', 'Fischer'];
-
-  genName(seed) {
-    const f = this.nameFirst[seed % this.nameFirst.length];
-    const l = this.nameLast[(seed * 7 + 3) % this.nameLast.length];
-    return `${f} ${l}`;
-  }
-
-  startPlanning() {
-    const building = this.state.buildings[0];
-    if (!building) return;
-    const seedRatios = {
-      1: [['Support', .28], ['Marketing', .22], ['Sales', .18], ['Engineering', .14], ['Finance', .08], ['Compliance', .05]],
-      2: [['Sales', .25], ['Design', .22], ['Product', .20], ['Operations', .13], ['Business Development', .12]],
-      3: [['Marketing', .15], ['Engineering', .20], ['Product', .12], ['HR', .10], ['Customer Success', .25], ['IT', .10]],
-      4: [['Sales', .30], ['Compliance', .12], ['Legal', .18], ['Business Development', .25]],
-    };
-    const stack = {};
-    building.floors.forEach(f => {
-      const ratios = seedRatios[f.n] || [];
-      const teams = {};
-      let sum = 0;
-      ratios.forEach(([team, r]) => { const v = Math.round(r * (f.desks || 40)); teams[team] = v; sum += v; });
-      stack[f.n] = { teams, notAllocated: Math.max(0, (f.desks || 40) - sum) };
-    });
-    this.setState({
-      stage: 'planning',
-      draft: 'Move Design, Engineering, and Product to all sit on floor 3',
-      planning: { buildingId: building.id, view: 'stackplan', selectedFloor: building.floors[0].n, stack, neighborhoods: null, assignmentsSynced: false },
-    });
-    this.pushAgent("Here's a starter stack plan based on your floors. Try asking me to move a team between floors, or send the example I've filled in below.");
-  }
-
-  setPlanningView(view) { this.setState(s => ({ planning: { ...s.planning, view } })); }
-  selectPlanningFloor(n) { this.setState(s => ({ planning: { ...s.planning, selectedFloor: Number(n) } })); }
-
-  setStackValue(floorN, team, rawValue) {
-    const value = Math.max(0, parseInt(rawValue, 10) || 0);
-    this.setState(s => {
-      const stack = JSON.parse(JSON.stringify(s.planning.stack));
-      const building = s.buildings.find(b => b.id === s.planning.buildingId);
-      const capacity = (building.floors.find(f => f.n === Number(floorN)) || {}).desks || 40;
-      stack[floorN].teams[team] = value;
-      const sumTeams = Object.values(stack[floorN].teams).reduce((a, b) => a + b, 0);
-      stack[floorN].notAllocated = Math.max(0, capacity - sumTeams);
-      return { planning: { ...s.planning, stack } };
-    });
-  }
-
-  parseMoveCommand(text) {
-    const floorMatch = text.match(/floor\s*(\d+)/i);
-    if (!floorMatch) return null;
-    const floor = parseInt(floorMatch[1], 10);
-    const lower = text.toLowerCase();
-    const teams = this.knownTeams.filter(t => lower.includes(t.toLowerCase()));
-    if (!teams.length) return null;
-    return { teams, floor };
-  }
-
-  interpretPlanningCommand(text) {
-    const parsed = this.parseMoveCommand(text);
-    if (parsed) { this.moveTeamsToFloor(parsed.teams, parsed.floor); return; }
-    this.pushAgent('I can move teams between floors — try something like "move Sales to floor 2".');
-  }
-
-  moveTeamsToFloor(teamNames, targetFloor) {
-    const stack = this.state.planning.stack;
-    if (!stack[targetFloor]) { this.pushAgent(`I couldn't find floor ${targetFloor}.`); return; }
-    const newStack = JSON.parse(JSON.stringify(stack));
-    teamNames.forEach(team => {
-      let moved = 0;
-      Object.keys(newStack).forEach(fn => {
-        if (Number(fn) === targetFloor) return;
-        const v = newStack[fn].teams[team];
-        if (v) { moved += v; delete newStack[fn].teams[team]; newStack[fn].notAllocated += v; }
-      });
-      if (moved > 0) {
-        newStack[targetFloor].teams[team] = (newStack[targetFloor].teams[team] || 0) + moved;
-        newStack[targetFloor].notAllocated = Math.max(0, newStack[targetFloor].notAllocated - moved);
-      }
-    });
-    this.setState(s => ({ planning: { ...s.planning, stack: newStack, selectedFloor: targetFloor, view: 'stackplan' } }));
-    this.pushAgent(`Done — ${teamNames.join(', ')} now all sit on floor ${targetFloor}.`, { kind: 'chips', chips: [{ label: 'Adjust neighborhoods based on stack plan', action: 'sync-neighborhoods' }] });
-  }
-
-  syncNeighborhoods() {
-    this.setState(s => ({ planning: { ...s.planning, view: 'neighborhoods', neighborhoods: JSON.parse(JSON.stringify(s.planning.stack)) } }));
-    this.pushAgent('Neighborhoods are updated to match your stack plan.', { kind: 'chips', chips: [{ label: 'Adjust assignments to match neighborhoods', action: 'sync-assignments' }] });
-  }
-
-  syncAssignments() {
-    this.setState(s => ({ planning: { ...s.planning, view: 'assignments', assignmentsSynced: true } }));
-    this.pushAgent("Assignments are updated — teammates now sit with their team's neighborhood.");
   }
 
   openModal = (key) => this.setState({ modalKey: key });
@@ -750,9 +508,38 @@ class Component extends DCLogic {
 
   componentDidUpdate() {
     if (this.scrollRef.current) this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight;
+    if (window.FloorPlanningOverlay) {
+      window.FloorPlanningOverlay.paintMinis(document);
+      setTimeout(() => window.FloorPlanningOverlay.paintMinis(document), 120);
+    }
+  }
+
+  openFloorPlan(floorId) {
+    const buildingName = this.state.buildings[0]?.name || 'Boston HQ';
+    if (window.FloorPlanningOverlay) {
+      window.FloorPlanningOverlay.open({ floorId, buildingName, view: 'layout' });
+    }
   }
 
   resetAll = () => { this.uid = 1; this.setState(this.initialState()); };
+
+  navPrimaryItems = [
+    { label: 'Map', viewBox: '0 0 384 512', icon: 'M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z' },
+    { label: 'My schedule', viewBox: '0 0 448 512', icon: 'M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192z' },
+    { label: 'People', viewBox: '0 0 640 512', icon: 'M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z' },
+    { label: 'Meeting spaces', viewBox: '0 0 512 512', icon: 'M64 256V160H224v96H64zm0 64H224v96H64V320zm224 96V320H448v96H288zM448 256H288V160H448v96zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z' },
+    { label: 'Workplace', hasChevron: true, viewBox: '0 0 384 512', icon: 'M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z' },
+    { label: 'Space management', hasChevron: true, viewBox: '0 0 576 512', icon: 'M264.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 149.8C37.4 145.8 32 137.3 32 128s5.4-17.9 13.9-21.8L264.5 5.2zM476.9 209.6l53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 277.8C37.4 273.8 32 265.3 32 256s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2zm-152 198.2l152-70.2 53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 405.8C37.4 401.8 32 393.3 32 384s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0z' },
+    { label: 'Analytics', viewBox: '0 0 512 512', icon: 'M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z' },
+    { label: 'Manage', viewBox: '0 0 512 512', icon: 'M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z' },
+  ];
+
+  navSecondaryItems = [
+    { label: 'Support', viewBox: '0 0 512 512', icon: 'M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM169.8 165.3c7.9-22.3 29.1-37.3 52.8-37.3h58.3c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24V250.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1H222.6c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z' },
+    { label: 'Give feedback', viewBox: '0 0 512 512', icon: 'M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z' },
+    { label: 'Notifications', viewBox: '0 0 512 512', icon: 'M480 32c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9L381.7 53c-48 48-113.1 75-181 75H144 128 32c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32l0 96c0 17.7 14.3 32 32 32H96c17.7 0 32-14.3 32-32V288h72.7c67.9 0 133 27 181 75l43.6 43.6c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6V32z' },
+    { label: 'Getting started', active: true, viewBox: '0 0 512 512', icon: 'M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24 288c-8.6 0-16.6-4.6-20.9-12.1s-4.2-16.7 .2-24.1l52.5-88.5c13-21.9 36.5-35.3 61.9-35.3l82.3 0c2.4-4 4.8-7.7 7.2-11.3C289.1-4.1 411.1-8.1 483.9 5.3c11.6 2.1 20.6 11.2 22.8 22.8c13.4 72.9 9.3 194.8-111.4 276.7c-3.5 2.4-7.3 4.8-11.3 7.2v82.3c0 25.4-13.4 49-35.3 61.9l-88.5 52.5c-7.4 4.4-16.6 4.5-24.1 .2s-12.1-12.3-12.1-20.9V380.8c-14.1 4.9-26.4 8.9-35.7 11.9c-11.2 3.6-23.4 .5-31.8-7.8zM384 168a40 40 0 1 0 0-80 40 40 0 1 0 0 80z' },
+  ];
 
   // ---------- messaging ----------
   pushUser(text) {
@@ -782,8 +569,7 @@ class Component extends DCLogic {
     if (!t) return;
     this.setState({ draft: '', stage: this.state.stage === 'landing' ? 'chat' : this.state.stage });
     this.pushUser(t);
-    if (this.state.stage === 'planning' || (this.state.stage === 'chat' && this.state.planning)) { this.interpretPlanningCommand(t); }
-    else { this.interpret(t); }
+    this.interpret(t);
   };
 
   onDraftChange = (e) => this.setState({ draft: e.target.value });
@@ -803,16 +589,12 @@ class Component extends DCLogic {
   dispatch(action) {
     const map = {
       'start-users': () => this.startUsersFlow(),
-      'start-buildings': () => this.startBuildingsFlow(),
       'start-maps': () => this.startMapsFlow(),
       csv: () => this.startCsvFlow(),
       scim: () => this.startScimFlow(),
       'scim-help': () => this.explainScim(),
-      'maps-perfloor': () => this.startMapsPerFloor(),
-      'maps-bulk': () => this.startMapsBulk(),
-      'add-another-building': () => this.addAnotherBuilding(),
-      'sync-neighborhoods': () => this.syncNeighborhoods(),
-      'sync-assignments': () => this.syncAssignments(),
+      'build-out-maps': () => this.buildOutMaps(),
+      'maps-images-only': () => this.mapsImagesOnly(),
     };
     (map[action] || (() => {}))();
   }
@@ -823,33 +605,84 @@ class Component extends DCLogic {
     if (t.includes('csv')) { this.startCsvFlow(); return; }
     if (t.includes('scim')) { this.startScimFlow(); return; }
     if (t.includes('user')) { this.startUsersFlow(); return; }
-    if (this.looksLikeBuildingDescription(t)) { this.parseAndCreateBuildings(text); return; }
-    if (t.includes('building') || t.includes('floor')) { this.startBuildingsFlow(); return; }
-    if (t.includes('map')) { this.startMapsFlow(); return; }
-    this.pushAgent("I can help you add your users, set up buildings, or upload maps — which would you like to start with?", { kind: 'chips', chips: this.remainingChips() });
+    if (t.includes('map') || t.includes('building') || t.includes('floor')) { this.startMapsFlow(); return; }
+    if (t.includes('optim') || t.includes('no.?show') || t.includes('unused')) { this.offerOptimize(); return; }
+    this.pushAgent("I can help you add users or upload floor maps — which would you like to start with?", { kind: 'chips', chips: this.remainingChips() });
   }
 
   remainingChips() {
     const chips = [];
-    if (!this.state.usersDone) chips.push({ label: 'Add my users', action: 'start-users' });
-    if (!this.state.buildingsDone) chips.push({ label: 'Set up my buildings', action: 'start-buildings' });
-    if (!this.state.mapsDone) chips.push({ label: 'Upload my maps', action: 'start-maps' });
+    if (!this.state.usersDone) chips.push({ label: 'Add users', action: 'start-users' });
+    if (!this.state.mapsDone) chips.push({ label: 'Upload maps', action: 'start-maps' });
     return chips;
   }
 
   suggestNext() {
     const remaining = this.remainingChips();
-    if (remaining.length === 0) { this.showCompletion(); return; }
+    if (remaining.length === 0) return;
     this.pushAgent('What would you like to do next?', { kind: 'chips', chips: remaining });
   }
 
-  showCompletion() {
-    const floors = this.state.buildings.reduce((n, b) => n + b.floors.length, 0);
-    const mapsCount = this.state.buildings.reduce((n, b) => n + b.floors.filter(f => f.status === 'done').length, 0);
-    const totals = this.state.buildings.reduce((acc, b) => { b.floors.forEach(f => { if (f.status === 'done' && f.desks) { acc.desks += f.desks; acc.rooms += f.rooms; } }); return acc; }, { desks: 0, rooms: 0 });
-    this.pushAgent("You've got users, buildings, and maps in place — you're ready to start planning your seating.", {
-      kind: 'completion',
-      summary: { users: this.state.usersCount || 0, buildings: this.state.buildings.length, floors, maps: mapsCount, desks: totals.desks, rooms: totals.rooms },
+  continueAfterSetupStep() {
+    const remaining = this.remainingChips();
+    if (remaining.length > 0) {
+      this.suggestNext();
+      return;
+    }
+    if (!this.state.optimizeDone) {
+      this.offerOptimize();
+    }
+  }
+
+  offerOptimize() {
+    this.pushAgent(
+      "You've set up your users and maps, and you're ready to start using Robin.\n\nTo keep your office running as smoothly as possible, customize a few settings so Robin can help optimize your space and make the most of it.",
+      {
+        kind: 'optimize',
+        spaceStrategy: 'optimize',
+        workCulture: 'even',
+        unusedPolicy: 'cancel-booking',
+        done: false,
+      }
+    );
+  }
+
+  setOptimizeField(id, field, value) {
+    this.updateCardById(id, { [field]: value });
+  }
+
+  saveOptimize(id) {
+    const card = this.state.messages.find(m => m.id === id)?.card;
+    this.updateCardById(id, { done: true });
+    this.setState({ optimizeDone: true }, () => {
+      const strategyLabels = {
+        expand: 'expand your space',
+        optimize: 'optimize your current space',
+        consolidate: 'consolidate or reduce your space',
+      };
+      const cultureLabels = {
+        primarilyAssigned: 'primarily assigned desks',
+        mostlyAssigned: 'mostly assigned desks',
+        even: 'an even split',
+        mostlyHybrid: 'mostly hybrid',
+        primarilyHybrid: 'primarily hybrid',
+      };
+      const unusedLabels = {
+        nothing: "won't change unused bookings automatically",
+        'cancel-booking': 'will cancel individual bookings after no-shows',
+        'cancel-series': 'will cancel the series after repeat no-shows',
+      };
+      const strategy = strategyLabels[card?.spaceStrategy] || 'optimize your current space';
+      const culture = cultureLabels[card?.workCulture] || 'an even split';
+      const unused = unusedLabels[card?.unusedPolicy] || 'will cancel individual bookings after no-shows';
+      this.pushAgent(`Got it — I'll treat your strategy as to ${strategy}, with ${culture}. Robin ${unused}. You can change these anytime in settings.`);
+    });
+  }
+
+  skipOptimize(id) {
+    if (id) this.updateCardById(id, { done: true });
+    this.setState({ optimizeDone: true }, () => {
+      this.pushAgent("No problem — you can tune these optimization settings anytime later. You're all set to start using Robin.");
     });
   }
 
@@ -904,9 +737,10 @@ class Component extends DCLogic {
   finishUsersCsv(id) {
     this.updateCardById(id, { done: true });
     const card = this.state.messages.find(m => m.id === id)?.card;
-    this.setState({ usersDone: true, usersCount: 48, usersMethod: 'csv', usersPreviewRows: card ? card.rows : [] });
-    this.pushAgent("48 teammates are in your directory. You can add more anytime, or connect SCIM later for automatic sync.");
-    this.suggestNext();
+    this.setState({ usersDone: true, usersCount: 48, usersMethod: 'csv', usersPreviewRows: card ? card.rows : [] }, () => {
+      this.pushAgent("48 teammates are in your directory. You can add more anytime, or connect SCIM later for automatic sync.");
+      this.continueAfterSetupStep();
+    });
   }
 
   // ---------- users: SCIM ----------
@@ -925,301 +759,198 @@ class Component extends DCLogic {
     this.updateCardById(id, { connected: true });
     const card = this.state.messages.find(m => m.id === id)?.card;
     const provider = card ? card.provider : 'your provider';
-    this.setState({ usersDone: true, usersCount: 0, usersMethod: 'scim', scimProvider: provider });
-    this.pushAgent(`Connected to ${provider}. Robin will keep your directory in sync automatically as your org changes.`);
-    this.suggestNext();
-  }
-
-  // ---------- buildings ----------
-  startBuildingsFlow() {
-    this.pushAgent(
-      "Let's set up your buildings. I've prefilled Boston HQ with 4 floors below — edit it or add more, or just tell me about your buildings in plain language.",
-      { kind: 'buildingsForm', rows: [{ id: this.uid++, name: 'Boston HQ', floors: '4' }] }
-    );
-  }
-
-  addAnotherBuilding() {
-    this.pushAgent('Add another building:', { kind: 'buildingsForm', rows: [{ id: this.uid++, name: '', floors: '' }] });
-  }
-
-  addBuildingRow(id) {
-    this.updateCardById(id, {});
-    this.setState(s => ({
-      messages: s.messages.map(m => (m.id === id ? { ...m, card: { ...m.card, rows: [...m.card.rows, { id: this.uid++, name: '', floors: '' }] } } : m)),
-    }));
-  }
-
-  removeBuildingRow(id, rowId) {
-    this.setState(s => ({
-      messages: s.messages.map(m => (m.id === id ? { ...m, card: { ...m.card, rows: m.card.rows.filter(r => r.id !== rowId) } } : m)),
-    }));
-  }
-
-  setBuildingRowField(id, rowId, field, value) {
-    this.setState(s => ({
-      messages: s.messages.map(m => (m.id === id ? { ...m, card: { ...m.card, rows: m.card.rows.map(r => (r.id === rowId ? { ...r, [field]: value } : r)) } } : m)),
-    }));
-  }
-
-  submitBuildingsForm(id) {
-    const card = this.state.messages.find(m => m.id === id)?.card;
-    if (!card) return;
-    const valid = card.rows.filter(r => r.name.trim() && Number(r.floors) > 0);
-    if (!valid.length) return;
-    const newBuildings = valid.map(r => ({
-      id: this.uid++,
-      name: r.name.trim(),
-      floors: Array.from({ length: Number(r.floors) }, (_, i) => ({ n: i + 1, status: 'pending', fileName: null })),
-    }));
-    this.setState(s => ({ buildings: [...s.buildings, ...newBuildings] }));
-    this.setState({ buildingsDone: true });
-    this.showBuildingsSummary(newBuildings);
-  }
-
-  showBuildingsSummary(newBuildings) {
-    this.pushAgent(null, {
-      kind: 'buildingCards',
-      headline: `Create ${newBuildings.length} new building${newBuildings.length > 1 ? 's' : ''}:`,
-      buildingIds: newBuildings.map(b => b.id),
-      chips: [
-        { label: 'Create another building', action: 'add-another-building' },
-        { label: 'Upload my maps', action: 'start-maps' },
-      ],
+    this.setState({ usersDone: true, usersCount: 0, usersMethod: 'scim', scimProvider: provider }, () => {
+      this.pushAgent(`Connected to ${provider}. Robin will keep your directory in sync automatically as your org changes.`);
+      this.suggestNext();
     });
-  }
-
-  looksLikeBuildingDescription(t) {
-    return /\d+\s*floors?/.test(t) && (t.includes('building') || t.includes('office') || t.includes('hq') || t.includes('headquarters') || t.includes('satellite'));
-  }
-
-  parseClause(clause) {
-    const floorMatch = clause.match(/(\d+)\s*floors?/i);
-    const cityMatch = clause.match(/\bin\s+([A-Z][a-zA-Z]+)/);
-    if (!floorMatch || !cityMatch) return null;
-    const floors = parseInt(floorMatch[1], 10);
-    const city = cityMatch[1];
-    const nameMatch = clause.match(/\b(?:our|a|an|the)\s+([A-Za-z][A-Za-z\s]*?)\s+in\s+/i);
-    const rawName = nameMatch ? nameMatch[1].trim() : `${city} Office`;
-    const name = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-    return { name, city, floors };
-  }
-
-  parseBuildings(text) {
-    const clauses = text.split(/(?<=[.!])\s+/).filter(Boolean);
-    let results = clauses.map(c => this.parseClause(c)).filter(Boolean);
-    if (!results.length) { const single = this.parseClause(text); if (single) results = [single]; }
-    return results;
-  }
-
-  parseAndCreateBuildings(text) {
-    const parsed = this.parseBuildings(text);
-    if (!parsed.length) {
-      this.pushAgent("I couldn't quite parse that — mind trying the quick form instead?", { kind: 'buildingsForm', rows: [{ id: this.uid++, name: '', floors: '' }] });
-      return;
-    }
-    const newBuildings = parsed.map(p => ({
-      id: this.uid++,
-      name: p.name,
-      city: p.city,
-      floors: Array.from({ length: p.floors }, (_, i) => ({ n: i + 1, status: 'pending', fileName: null })),
-    }));
-    this.setState(s => ({ buildings: [...s.buildings, ...newBuildings] }));
-    this.setState({ buildingsDone: true });
-    this.showBuildingsSummary(newBuildings);
   }
 
   // ---------- maps ----------
   startMapsFlow() {
-    if (this.state.buildings.length === 0) {
-      this.pushAgent(
-        "You haven't set up any buildings yet — want to do that first? Or upload your map files now and I'll connect them once your buildings exist.",
-        { kind: 'chips', chips: [{ label: 'Set up buildings first', action: 'start-buildings' }, { label: 'Upload maps now', action: 'maps-bulk' }] }
-      );
-      return;
-    }
     this.pushAgent(
-      "Maps connect to the floors you've created. Robin supports CAD file uploads (DWG, DXF, PDF) — or if you don't have one handy, just screenshot your current floor plan and Robin will redraw it for you. How would you like to upload?",
-      { kind: 'chips', chips: [{ label: 'Upload one floor at a time', action: 'maps-perfloor' }, { label: 'Bulk upload all my maps', action: 'maps-bulk' }] }
+      "Upload as many floor maps as you'd like — drop them all in together. I'll sort them out, group them into buildings, and infer building names and floor order from the map content and filenames.",
+      { kind: 'mapsBulk', stage: 'idle', progress: 0, analyzingStatus: '' }
     );
   }
 
-  startMapsPerFloor() {
-    this.pushAgent('Here are your floors — upload a map for each.', { kind: 'mapsPerFloor', buildingIds: this.state.buildings.map(b => b.id) });
-  }
-
-  generateSpaceStats() {
-    const desks = Math.floor(20 + Math.random() * 60);
-    const rooms = Math.max(1, Math.round(desks / 10));
-    return { desks, rooms };
-  }
-
-  uploadFloorMap(buildingId, floorN) {
-    const b = this.state.buildings.find(x => x.id === buildingId);
-    if (!b) return;
-    const fileName = `${b.name.replace(/\s+/g, '-')}-F${floorN}.pdf`;
-    const stats = this.generateSpaceStats();
-    this.setState(s => ({
-      buildings: s.buildings.map(bb => (bb.id !== buildingId ? bb : { ...bb, floors: bb.floors.map(f => (f.n === floorN ? { ...f, status: 'done', fileName, desks: stats.desks, rooms: stats.rooms } : f)) })),
-    }));
-  }
-
-  finishMapsPerFloor() {
-    this.setState({ mapsDone: true });
-    const totals = this.state.buildings.reduce((acc, b) => {
-      b.floors.forEach(f => { if (f.status === 'done' && f.desks) { acc.desks += f.desks; acc.rooms += f.rooms; } });
-      return acc;
-    }, { desks: 0, rooms: 0 });
-    this.pushAgent(`All set — those floors are ready to go. I scanned the maps and found ${totals.desks} desks and ${totals.rooms} meeting rooms.`);
-    this.suggestNext();
-  }
-
-  startMapsBulk() {
-    this.pushAgent("Go ahead and select your map files — you can drop several at once and I'll match them to the right building and floor.", { kind: 'mapsBulk', stage: 'idle' });
-  }
-
-  matchFile(name, buildings) {
-    const lower = name.toLowerCase();
-    for (const b of buildings) {
-      const cityHit = b.city && lower.includes(b.city.toLowerCase());
-      const nameHit = b.name && lower.includes(b.name.toLowerCase().split(' ')[0]);
-      if (cityHit || nameHit) {
-        let floorNum = null;
-        const fMatch = lower.match(/f\.?\s?-?(\d+)/) || lower.match(/floor\s?-?(\d+)/);
-        if (fMatch) floorNum = parseInt(fMatch[1], 10);
-        else {
-          const words = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6 };
-          for (const w in words) { if (lower.includes(w)) { floorNum = words[w]; break; } }
-        }
-        if (floorNum && floorNum <= b.floors.length) return { buildingId: b.id, floor: floorNum };
-      }
-    }
-    return null;
-  }
-
   selectFilesForMapsBulk(id) {
-    const files = ['Boston HQ - F1.pdf', 'Boston HQ - F2.pdf', 'Boston HQ - F3.pdf', 'Scan0007.pdf'];
-    const buildings = this.state.buildings;
-    const matched = []; const unmatched = [];
-    files.forEach(name => {
-      const m = this.matchFile(name, buildings);
-      if (m) matched.push({ name, buildingId: m.buildingId, floor: m.floor });
-      else unmatched.push({ name, buildingId: null, floor: null });
-    });
-    // if exactly one building and one open floor remains, assume any leftover unmatched file belongs there
-    if (buildings.length === 1 && unmatched.length === 1) {
-      const b = buildings[0];
-      const takenFloors = new Set(matched.filter(m => m.buildingId === b.id).map(m => m.floor));
-      const openFloors = b.floors.map(f => f.n).filter(n => !takenFloors.has(n));
-      if (openFloors.length === 1) {
-        matched.push({ name: unmatched[0].name, buildingId: b.id, floor: openFloors[0] });
-        unmatched.length = 0;
+    const statuses = [
+      'Reading filenames and metadata…',
+      'Comparing shared layout patterns across maps…',
+      'Inferring building name and floor order…',
+    ];
+    this.updateCardById(id, { stage: 'analyzing', progress: 8, analyzingStatus: statuses[0] });
+    let step = 0;
+    const iv = setInterval(() => {
+      step += 1;
+      const progress = Math.min(95, 8 + step * 28);
+      this.updateCardById(id, {
+        progress,
+        analyzingStatus: statuses[Math.min(step, statuses.length - 1)],
+      });
+      if (step >= 3) {
+        clearInterval(iv);
+        setTimeout(() => this.finishMapAnalysis(id), 450);
       }
-    }
-    this.setState(s => ({
-      buildings: s.buildings.map(b => {
-        const hits = matched.filter(m => m.buildingId === b.id);
-        if (!hits.length) return b;
-        return { ...b, floors: b.floors.map(f => { const hit = hits.find(h => h.floor === f.n); if (!hit) return f; const stats = this.generateSpaceStats(); return { ...f, status: 'done', fileName: hit.name, desks: stats.desks, rooms: stats.rooms }; }) };
-      }),
-    }));
-    this.updateCardById(id, { stage: 'matched', matched, unmatched });
+    }, 700);
   }
 
-  setUnmatchedField(id, fileName, field, value) {
+  finishMapAnalysis(id) {
+    const matched = [
+      { name: 'Boston HQ - Floor 1.pdf', floor: 1, floorLabel: 'Floor 1', desks: 120, spaces: 14, assignments: 80, neighborhoods: 8 },
+      { name: 'Boston HQ - Floor 2.pdf', floor: 2, floorLabel: 'Floor 2', desks: 135, spaces: 16, assignments: 92, neighborhoods: 7 },
+      { name: 'Boston HQ - Floor 3.pdf', floor: 3, floorLabel: 'Floor 3', desks: 110, spaces: 12, assignments: 74, neighborhoods: 6 },
+      { name: 'Boston HQ - Floor 4.pdf', floor: 4, floorLabel: 'Floor 4', desks: 98, spaces: 10, assignments: 61, neighborhoods: 5 },
+    ];
+    this.updateCardById(id, {
+      stage: 'matched',
+      progress: 100,
+      analyzingStatus: 'Done',
+      detectedBuilding: { name: 'Boston HQ', city: 'Boston', floorCount: 4 },
+      matched,
+    });
+  }
+
+  setDetectedBuildingName(id, value) {
     this.setState(s => ({
-      messages: s.messages.map(m => (m.id === id ? { ...m, card: { ...m.card, unmatched: m.card.unmatched.map(u => (u.name === fileName ? { ...u, [field]: value } : u)) } } : m)),
+      messages: s.messages.map(m => (m.id === id ? { ...m, card: { ...m.card, detectedBuilding: { ...m.card.detectedBuilding, name: value } } } : m)),
+    }));
+  }
+
+  setMatchedFloorLabel(id, floor, value) {
+    this.setState(s => ({
+      messages: s.messages.map(m => (m.id === id ? {
+        ...m,
+        card: {
+          ...m.card,
+          matched: m.card.matched.map(file => (file.floor === floor ? { ...file, floorLabel: value } : file)),
+        },
+      } : m)),
     }));
   }
 
   confirmMapsBulk(id) {
     const card = this.state.messages.find(m => m.id === id)?.card;
-    if (!card) return;
-    const toApply = card.unmatched.filter(u => u.buildingId && u.floor);
-    const newBuildings = this.state.buildings.map(b => {
-      const hits = toApply.filter(u => Number(u.buildingId) === b.id);
-      if (!hits.length) return b;
-      return { ...b, floors: b.floors.map(f => { const hit = hits.find(h => Number(h.floor) === f.n); if (!hit) return f; const stats = this.generateSpaceStats(); return { ...f, status: 'done', fileName: hit.name, desks: stats.desks, rooms: stats.rooms }; }) };
+    if (!card || !card.detectedBuilding) return;
+    const buildingName = (card.detectedBuilding.name || '').trim() || 'Boston HQ';
+    const floors = card.matched.map(file => ({
+      n: file.floor,
+      label: (file.floorLabel || '').trim() || `Floor ${file.floor}`,
+      status: 'done',
+      fileName: file.name,
+      desks: file.desks,
+      spaces: file.spaces,
+      rooms: file.spaces,
+      assignments: file.assignments,
+      neighborhoods: file.neighborhoods,
+    }));
+    const building = {
+      id: this.uid++,
+      name: buildingName,
+      city: card.detectedBuilding.city,
+      floors,
+    };
+    this.updateCardById(id, { stage: 'confirmed', savedBuildingName: buildingName });
+    this.setState({ buildings: [building], pendingMapUploadId: id, mapsDone: false }, () => {
+      this.pushAgent(`"${buildingName}" was saved. Give me a moment to analyze what's on each map…`);
+      setTimeout(() => this.runMapDetectionThinking(building), 900);
     });
-    const stillPending = newBuildings.some(b => b.floors.some(f => f.status === 'pending'));
-    this.setState({ buildings: newBuildings, mapsDone: true });
-    this.updateCardById(id, { stage: 'confirmed' });
-    const totals = newBuildings.reduce((acc, b) => { b.floors.forEach(f => { if (f.status === 'done' && f.desks) { acc.desks += f.desks; acc.rooms += f.rooms; } }); return acc; }, { desks: 0, rooms: 0 });
-    this.pushAgent(stillPending ? `Thanks — I've matched what I can and scanned those maps: ${totals.desks} desks and ${totals.rooms} meeting rooms found so far. A few floors still need maps; upload those individually whenever you're ready.` : `All your floor maps are connected. I scanned them and found ${totals.desks} desks and ${totals.rooms} meeting rooms across your floors.`);
-    this.suggestNext();
   }
 
-  // ---------- planning ----------
-  buildPlanningViewModel() {
-    const s = this.state;
-    const p = s.planning;
-    if (s.stage !== 'planning' || !p) return { isPlanning: false };
-    const building = s.buildings.find(b => b.id === p.buildingId) || s.buildings[0];
-    if (!building) return { isPlanning: false };
-    const view = p.view;
-    const tabs = [
-      { key: 'stackplan', label: 'Stack plan' },
-      { key: 'neighborhoods', label: 'Neighborhoods' },
-      { key: 'assignments', label: 'Assignments' },
-    ].map(t => ({
-      label: t.label,
-      bg: view === t.key ? '#2774C1' : 'transparent',
-      color: view === t.key ? '#fff' : 'rgba(255,255,255,.65)',
-      onClick: () => this.setPlanningView(t.key),
+  runThinkingSteps(stepLabels, onComplete, stepMs = 1200) {
+    const thinkingId = this.uid++;
+    this.setState(s => ({
+      messages: [...s.messages, { id: thinkingId, role: 'agent', card: { kind: 'mapThinking', steps: stepLabels, activeIndex: 0 } }],
     }));
-    const viewTitles = { stackplan: 'Stack Plan', neighborhoods: 'Neighborhoods', assignments: 'Assignments' };
-    const dataSource = view === 'stackplan' ? p.stack : (p.neighborhoods || p.stack);
-
-    const floors = building.floors.map(f => {
-      const entry = dataSource[f.n] || { teams: {}, notAllocated: f.desks || 40 };
-      const capacity = f.desks || 40;
-      const teamEntries = Object.entries(entry.teams).filter(([, v]) => v > 0);
-      const sumTeams = teamEntries.reduce((a, [, v]) => a + v, 0);
-      const denom = Math.max(capacity, sumTeams + (entry.notAllocated || 0), 1);
-      const segments = teamEntries.map(([team, v]) => ({ team, color: this.teamColors[team] || '#999', pct: (v / denom) * 100, count: v }));
-      const notAllocatedPct = (Math.max(0, entry.notAllocated || 0) / denom) * 100;
-      const clusters = teamEntries.map(([team, v]) => ({
-        team, color: this.teamColors[team] || '#999', label: `${team} \u00b7 ${v}`,
-        dots: Array.from({ length: Math.min(v, 8) }, (_, i) => ({
-          initials: view === 'assignments' ? this.genName(f.n * 100 + i).split(' ').map(w => w[0]).join('') : '',
-        })),
-        extraLabel: v > 8 ? `+${v - 8}` : '',
-        hasExtra: v > 8,
-      }));
-      return {
-        n: f.n, label: `Floor ${f.n}`, desksLabel: `${capacity} desks`,
-        isSelected: p.selectedFloor === f.n,
-        borderColor: p.selectedFloor === f.n ? 'var(--blue-6)' : 'var(--border-subtle)',
-        borderWidth: p.selectedFloor === f.n ? '2px' : '1px',
-        onSelect: () => this.selectPlanningFloor(f.n),
-        segments, notAllocatedPct, hasNotAllocated: (entry.notAllocated || 0) > 0,
-        clusters, hasClusters: clusters.length > 0,
-      };
-    });
-
-    const selectedEntry = dataSource[p.selectedFloor] || { teams: {}, notAllocated: 0 };
-    const selectedRows = Object.entries(selectedEntry.teams).filter(([, v]) => v > 0).map(([team, v]) => ({
-      label: team, color: this.teamColors[team] || '#999', count: v,
-      onChange: (e) => this.setStackValue(p.selectedFloor, team, e.target.value),
-    }));
-    const selectedTotal = Object.values(selectedEntry.teams).reduce((a, b) => a + b, 0) + (selectedEntry.notAllocated || 0);
-    const floorOptions = building.floors.map(f => ({ value: String(f.n), label: `Floor ${f.n}` }));
-
-    return {
-      isPlanning: true,
-      planningBuildingName: building.name,
-      planningViewTitle: viewTitles[view],
-      planningTabs: tabs,
-      planningFloorCards: floors,
-      isStackplanView: view === 'stackplan',
-      isLeftListView: view !== 'stackplan',
-      selectedFloorLabel: `Floor ${p.selectedFloor}`,
-      selectedFloorRows: selectedRows,
-      selectedNotAllocated: selectedEntry.notAllocated || 0,
-      selectedTotal,
-      floorOptions,
-      selectedFloorValue: String(p.selectedFloor),
-      onFloorSelectChange: (v) => this.selectPlanningFloor(v),
+    let i = 0;
+    const advance = () => {
+      i += 1;
+      if (i < stepLabels.length) {
+        this.updateCardById(thinkingId, { activeIndex: i });
+        setTimeout(advance, stepMs);
+      } else {
+        this.updateCardById(thinkingId, { activeIndex: stepLabels.length });
+        setTimeout(onComplete, 750);
+      }
     };
+    setTimeout(advance, stepMs);
+  }
+
+  runMapDetectionThinking(building) {
+    this.runThinkingSteps([
+      'Reading desks and spaces on each floor',
+      'Matching people to their assigned desks',
+      'Grouping desks into neighborhoods',
+    ], () => this.offerMapBuildOut(building), 1100);
+  }
+
+  offerMapBuildOut(building) {
+    this.pushAgent("I've analyzed your maps and was able to detect desks and spaces on your maps. I also detected people assigned to desks and neighborhood information. Here's what I found:", {
+      kind: 'mapDetection',
+      buildingName: building.name,
+      floors: building.floors.map(f => ({
+        label: f.label,
+        desks: f.desks,
+        spaces: f.spaces,
+        assignments: f.assignments,
+        neighborhoods: f.neighborhoods,
+      })),
+    });
+    this.pushAgent('Want me to save you some time and automatically create those assets and details of each map?', {
+      kind: 'chips',
+      chips: [
+        { label: 'Yes, build out my maps', action: 'build-out-maps' },
+        { label: 'No just add the map image', action: 'maps-images-only' },
+      ],
+    });
+  }
+
+  getPendingMapContext() {
+    const building = this.state.buildings[0];
+    const uploadId = this.state.pendingMapUploadId;
+    const card = this.state.messages.find(m => m.id === uploadId)?.card;
+    return { building, uploadId, card };
+  }
+
+  buildOutMaps() {
+    const { building } = this.getPendingMapContext();
+    if (!building) return;
+    this.pushAgent(`On it — I'll build out the map details for ${building.name} now.`);
+    setTimeout(() => {
+      this.runThinkingSteps([
+        'Creating desks across each floor',
+        'Creating spaces and rooms',
+        'Creating neighborhoods',
+        'Creating desk assignments',
+        'Finalizing map assets and previews',
+      ], () => {
+        this.setState({ mapsDone: true, mapsBuiltOut: true }, () => {
+          this.pushAgent(`Done — I've created those assets across ${building.name}. Here are quick snapshots of each floor map — open any floor to review Assignments and Neighborhoods:`, {
+            kind: 'mapPreviews',
+            caption: `Floor maps for ${building.name}`,
+            floors: building.floors.map(f => ({
+              floorId: `floor-${f.n}`,
+              floorLabel: f.label,
+              fileName: f.fileName,
+            })),
+          });
+        });
+      }, 1300);
+    }, 700);
+  }
+
+  mapsImagesOnly() {
+    const { building } = this.getPendingMapContext();
+    if (!building) return;
+    this.setState({ mapsDone: true, mapsBuiltOut: false }, () => {
+      this.pushAgent(`Got it — I've added the map images for ${building.name} without creating desks, assignments, or neighborhoods.`);
+      this.continueAfterSetupStep();
+    });
+  }
+
+  finishMapPreviews(id) {
+    this.updateCardById(id, { done: true });
+    this.continueAfterSetupStep();
   }
 
   // ---------- render ----------
@@ -1227,12 +958,9 @@ class Component extends DCLogic {
     const s = this.state;
     const isLanding = s.stage === 'landing';
     const landingChips = [
-      { label: 'Add my users', onClick: () => this.onLandingChip({ label: 'Add my users', action: 'start-users' }) },
-      { label: 'Start setting up my buildings', onClick: () => this.onLandingChip({ label: 'Start setting up my buildings', action: 'start-buildings' }) },
-      { label: 'Upload my maps', onClick: () => this.onLandingChip({ label: 'Upload my maps', action: 'start-maps' }) },
+      { label: 'Add users', onClick: () => this.onLandingChip({ label: 'Add users', action: 'start-users' }) },
+      { label: 'Upload maps', onClick: () => this.onLandingChip({ label: 'Upload maps', action: 'start-maps' }) },
     ];
-
-    const buildingsById = Object.fromEntries(s.buildings.map(b => [b.id, b]));
 
     const messages = s.messages.map(m => {
       const view = { id: m.id, isAgent: m.role === 'agent', justify: m.role === 'agent' ? 'flex-start' : 'flex-end' };
@@ -1250,6 +978,44 @@ class Component extends DCLogic {
       if (card.kind === 'chips') {
         view.isChips = true;
         view.card = { chips: card.chips.map(c => ({ label: c.label, onClick: () => this.onChipClick(c) })) };
+      } else if (card.kind === 'optimize') {
+        view.isOptimize = true;
+        const pickStyle = (selected) => ({
+          border: selected ? 'var(--blue-4, #2774c1)' : 'var(--border-default)',
+          bg: selected ? 'var(--blue-0, #F0F7FF)' : 'var(--surface-card, #fff)',
+          dotBorder: selected ? 'var(--blue-4, #2774c1)' : 'var(--border-strong, #868686)',
+          dotFill: selected ? 'var(--blue-4, #2774c1)' : 'transparent',
+        });
+        const locked = !!card.done;
+        const choose = (field, value) => () => { if (!locked) this.setOptimizeField(m.id, field, value); };
+        view.card = {
+          cursor: locked ? 'default' : 'pointer',
+          showActions: !locked,
+          isDone: locked,
+          onSave: () => this.saveOptimize(m.id),
+          onSkip: () => this.skipOptimize(m.id),
+          spaceStrategyOptions: [
+            { value: 'expand', label: 'Expand our space' },
+            { value: 'optimize', label: 'Optimize our current space' },
+            { value: 'consolidate', label: 'Consolidate or reduce our space' },
+          ].map(o => ({ ...o, ...pickStyle(card.spaceStrategy === o.value), onClick: choose('spaceStrategy', o.value) })),
+          workCultureOptions: [
+            { value: 'primarilyAssigned', label: 'Primarily assigned' },
+            { value: 'mostlyAssigned', label: 'Mostly assigned' },
+            { value: 'even', label: 'Even split' },
+            { value: 'mostlyHybrid', label: 'Mostly hybrid' },
+            { value: 'primarilyHybrid', label: 'Primarily hybrid' },
+          ].map(o => ({
+            ...o,
+            variant: card.workCulture === o.value ? 'primary' : 'default',
+            onClick: choose('workCulture', o.value),
+          })),
+          unusedPolicyOptions: [
+            { value: 'nothing', label: 'Do nothing' },
+            { value: 'cancel-booking', label: 'Cancel the individual bookings after no-shows' },
+            { value: 'cancel-series', label: 'Cancel the series after repeat no-shows' },
+          ].map(o => ({ ...o, ...pickStyle(card.unusedPolicy === o.value), onClick: choose('unusedPolicy', o.value) })),
+        };
       } else if (card.kind === 'csv') {
         view.isCsv = true;
         view.card = {
@@ -1260,6 +1026,7 @@ class Component extends DCLogic {
           rows: card.rows || [],
           onDrop: () => this.simulateCsvUpload(m.id),
           onContinue: () => this.finishUsersCsv(m.id),
+          showContinue: !card.done,
         };
       } else if (card.kind === 'scim') {
         view.isScim = true;
@@ -1274,102 +1041,85 @@ class Component extends DCLogic {
           showConnected: card.connected,
           connectedLabel: `Connected to ${card.provider}`,
         };
-      } else if (card.kind === 'buildingsForm') {
-        view.isBuildingsForm = true;
-        view.card = {
-          rows: card.rows.map(r => ({
-            id: r.id, name: r.name, city: r.city, floors: r.floors,
-            canRemove: card.rows.length > 1,
-            onNameChange: (e) => this.setBuildingRowField(m.id, r.id, 'name', e.target.value),
-            onCityChange: (e) => this.setBuildingRowField(m.id, r.id, 'city', e.target.value),
-            onFloorsChange: (e) => this.setBuildingRowField(m.id, r.id, 'floors', e.target.value),
-            onRemove: () => this.removeBuildingRow(m.id, r.id),
-          })),
-          onAddRow: () => this.addBuildingRow(m.id),
-          onSubmit: () => this.submitBuildingsForm(m.id),
-        };
-      } else if (card.kind === 'buildingCards') {
-        view.isBuildingCards = true;
-        const buildingsData = card.buildingIds.map(id => buildingsById[id]).filter(Boolean).map(b => ({
-          name: b.name,
-          floorLabel: `${b.floors.length} floor${b.floors.length > 1 ? 's' : ''}`,
-        }));
-        view.card = {
-          headline: card.headline,
-          buildingsData,
-          chips: (card.chips || []).map(c => ({ label: c.label, onClick: () => this.onChipClick(c) })),
-        };
-      } else if (card.kind === 'mapsPerFloor') {
-        view.isMapsPerFloor = true;
-        const buildingsData = card.buildingIds.map(id => buildingsById[id]).filter(Boolean).map(b => ({
-          name: b.name, city: b.city,
-          floors: b.floors.map(f => ({
-            n: f.n, isDone: f.status === 'done', isPending: f.status !== 'done', fileName: f.fileName,
-            statsLabel: f.desks ? `${f.desks} desks · ${f.rooms} meeting rooms` : '',
-            onUpload: () => this.uploadFloorMap(b.id, f.n),
-          })),
-        }));
-        view.card = { buildingsData, onFinish: () => this.finishMapsPerFloor() };
       } else if (card.kind === 'mapsBulk') {
         view.isMapsBulk = true;
-        const buildingOptions = s.buildings.map(b => ({ value: String(b.id), label: b.city ? `${b.name} — ${b.city}` : b.name }));
-        const nameOf = (bid, fl) => {
-          const b = buildingsById[bid];
-          if (!b) return '';
-          const floor = b.floors.find(f => f.n === Number(fl));
-          const stats = floor && floor.desks ? ` · ${floor.desks} desks, ${floor.rooms} rooms` : '';
-          return `${b.name} — Floor ${fl}${stats}`;
-        };
+        const buildingName = card.detectedBuilding?.name || card.savedBuildingName || '';
         view.card = {
           isIdle: card.stage === 'idle',
+          isAnalyzing: card.stage === 'analyzing',
           isMatched: card.stage === 'matched',
           isConfirmed: card.stage === 'confirmed',
+          analyzingStatus: card.analyzingStatus || 'Analyzing map files…',
+          progressPct: `${card.progress || 0}%`,
+          buildingName,
+          onBuildingNameChange: (e) => this.setDetectedBuildingName(m.id, e.target.value),
           onSelectFiles: () => this.selectFilesForMapsBulk(m.id),
-          matchedView: (card.matched || []).map(mf => ({ name: mf.name, label: nameOf(mf.buildingId, mf.floor) })),
-          hasUnmatched: (card.unmatched || []).length > 0,
-          unmatchedView: (card.unmatched || []).map(uf => {
-            const b = uf.buildingId ? buildingsById[Number(uf.buildingId)] : null;
-            const floorOptions = b ? b.floors.map(f => ({ value: String(f.n), label: `Floor ${f.n}` })) : [];
+          matchedView: (card.matched || []).map(file => ({
+            fileName: file.name,
+            floorLabel: file.floorLabel,
+            onFloorLabelChange: (e) => this.setMatchedFloorLabel(m.id, file.floor, e.target.value),
+          })),
+          onConfirm: () => this.confirmMapsBulk(m.id),
+          savedBuildingName: card.savedBuildingName || buildingName,
+          savedSummary: `${(card.matched || []).length} floors connected`,
+        };
+      } else if (card.kind === 'mapThinking') {
+        view.isMapThinking = true;
+        view.card = {
+          steps: (card.steps || []).map((label, i) => {
+            const isDone = i < card.activeIndex;
+            const isActive = i === card.activeIndex;
             return {
-              name: uf.name,
-              buildingOptions, buildingValue: uf.buildingId ? String(uf.buildingId) : undefined,
-              onBuildingChange: (v) => this.setUnmatchedField(m.id, uf.name, 'buildingId', v),
-              floorOptions, floorValue: uf.floor ? String(uf.floor) : undefined,
-              onFloorChange: (v) => this.setUnmatchedField(m.id, uf.name, 'floor', v),
+              label,
+              isDone,
+              isActive,
+              isPending: i > card.activeIndex,
+              textColor: isDone ? 'var(--text-body)' : (isActive ? 'var(--text-primary)' : 'var(--text-muted)'),
             };
           }),
-          onConfirm: () => this.confirmMapsBulk(m.id),
-          finalView: [...(card.matched || []).map(mf => ({ name: mf.name, label: nameOf(mf.buildingId, mf.floor) })),
-            ...(card.unmatched || []).filter(u => u.buildingId && u.floor).map(u => ({ name: u.name, label: nameOf(Number(u.buildingId), Number(u.floor)) }))],
         };
-      } else if (card.kind === 'completion') {
-        view.isCompletion = true;
-        view.card = { summary: card.summary };
+      } else if (card.kind === 'mapDetection') {
+        view.isMapDetection = true;
+        view.card = {
+          buildingName: card.buildingName || 'Building',
+          floors: (card.floors || []).map(f => ({
+            label: f.label,
+            tags: [
+              { label: `${f.desks} desks` },
+              { label: `${f.spaces} spaces` },
+              { label: `${f.assignments} assignments` },
+              { label: `${f.neighborhoods} neighborhoods` },
+            ],
+          })),
+        };
+      } else if (card.kind === 'mapPreviews') {
+        view.isMapPreviews = true;
+        view.card = {
+          previewCaption: card.caption || 'Floor map previews',
+          previewFloors: (card.floors || []).map(f => ({
+            floorId: f.floorId || `floor-${f.n || 1}`,
+            floorLabel: f.floorLabel,
+            fileName: f.fileName,
+            onOpen: () => this.openFloorPlan(f.floorId || `floor-${f.n || 1}`),
+          })),
+          showContinue: !card.done,
+          onContinue: () => this.finishMapPreviews(m.id),
+        };
       }
       return view;
     });
 
-    const stepDefs = [
-      { key: 'users', label: 'Add users', done: s.usersDone },
-      { key: 'buildings', label: 'Add buildings', done: s.buildingsDone },
-      { key: 'maps', label: 'Add maps', done: s.mapsDone },
-    ];
-    const steps = stepDefs.map(d => ({
-      label: d.label, done: d.done,
-      cursor: d.done ? 'pointer' : 'default',
-      onClick: d.done ? () => this.openModal(d.key) : undefined,
-      hoverStyle: d.done ? { backgroundColor: 'rgba(255,255,255,.08)' } : {},
-      dotBg: d.done ? 'var(--blue-4)' : 'rgba(255,255,255,.12)',
-      dotBorder: d.done ? 'none' : '1.5px solid rgba(255,255,255,.35)',
-      dotColor: 'var(--white)',
-      textColor: d.done ? 'var(--white)' : 'rgba(255,255,255,.55)',
-      fontWeight: d.done ? 'var(--fw-medium)' : 'var(--fw-normal)',
+    const navPrimary = this.navPrimaryItems;
+    const navSecondary = this.navSecondaryItems.map(item => ({
+      ...item,
+      bg: item.active ? '#1E4E8C' : 'transparent',
+      color: item.active ? 'var(--white)' : 'rgba(255,255,255,.9)',
+      iconColor: item.active ? 'var(--white)' : 'rgba(255,255,255,.72)',
+      fontWeight: item.active ? 'var(--fw-medium)' : 'var(--fw-normal)',
     }));
 
     const modalKey = s.modalKey;
-    const modalTitles = { users: 'Users added', buildings: 'Buildings added', maps: 'Maps connected' };
-    const allFloors = s.buildings.flatMap(b => b.floors.map(f => ({ ...f, buildingName: b.name, city: b.city })));
-
+    const modalTitles = { users: 'Users added', maps: 'Maps connected' };
     return {
       isLanding,
       isChat: s.stage === 'chat',
@@ -1381,9 +1131,9 @@ class Component extends DCLogic {
       messages,
       scrollRef: this.scrollRef,
       resetAll: this.resetAll,
-      startPlanning: () => this.startPlanning(),
-      ...this.buildPlanningViewModel(),
-      steps,
+      isPlanning: false,
+      navPrimary,
+      navSecondary,
       hasModal: !!modalKey,
       modalTitle: modalTitles[modalKey] || '',
       closeModal: this.closeModal,
@@ -1394,13 +1144,14 @@ class Component extends DCLogic {
       usersModalCount: s.usersCount,
       usersModalRows: s.usersPreviewRows,
       usersModalConnectedLabel: `Connected to ${s.scimProvider}`,
-      isBuildingsModal: modalKey === 'buildings',
       isMapsModal: modalKey === 'maps',
       modalBuildings: s.buildings.map(b => ({
         name: b.name, city: b.city,
         floorCount: `${b.floors.length} floor${b.floors.length > 1 ? 's' : ''}`,
         floors: b.floors.map(f => ({
-          n: f.n, isDone: f.status === 'done',
+          n: f.n,
+          label: f.label || `Floor ${f.n}`,
+          isDone: f.status === 'done',
           tagVariant: f.status === 'done' ? 'success' : 'neutral',
           statusLabel: f.status === 'done' ? f.fileName : 'No map yet',
           statsLabel: f.desks ? `${f.desks} desks · ${f.rooms} meeting rooms` : '',
