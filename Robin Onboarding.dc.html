@@ -25,6 +25,34 @@
     @keyframes rb-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes rb-dot { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
     @keyframes rb-spin { to { transform: rotate(360deg); } }
+    .rb-opt-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--blue-5, #4A91CF) 0%, var(--blue-5, #4A91CF) var(--rb-opt-pct, 50%), var(--gray-20, #E0E0E0) var(--rb-opt-pct, 50%), var(--gray-20, #E0E0E0) 100%);
+      outline: none;
+    }
+    .rb-opt-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--blue-6, #2774C1);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(28, 28, 28, 0.2);
+      cursor: pointer;
+    }
+    .rb-opt-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--blue-6, #2774C1);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(28, 28, 28, 0.2);
+      cursor: pointer;
+    }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: var(--gray-30); border-radius: 4px; }
   </style>
@@ -179,7 +207,7 @@
         <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
           <div style="display:flex;gap:10px;align-items:flex-start;justify-content:{{ m.justify }};animation:rb-fade-in .25s ease;">
             <sc-if value="{{ m.isAgent }}" hint-placeholder-val="{{ true }}">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--magenta-1);display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--magenta-1);border:1px solid #F2C2D6;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;">
                 <img src="_ds/robin-design-system-2b6e7b8a-ca0b-4754-906b-6a73921b4986/assets/logo/robin-bird.svg" style="width:15px;height:15px;" alt="">
               </div>
             </sc-if>
@@ -201,7 +229,7 @@
               <sc-if value="{{ m.isChips }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;flex-wrap:wrap;gap:8px;">
                   <sc-for list="{{ m.card.chips }}" as="chip" hint-placeholder-count="2">
-                    <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
+                    <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="{{ chip.variant }}" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
                   </sc-for>
                 </div>
               </sc-if>
@@ -210,24 +238,31 @@
                 <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Card" hint-size="520px,280px" style="width:520px;max-width:100%;">
                   <div style="display:flex;flex-direction:column;gap:20px;">
                     <div class="rb-field">
-                      <label class="rb-field__label">What best describes your organization's office space strategy?</label>
-                      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-                        <sc-for list="{{ m.card.spaceStrategyOptions }}" as="opt" hint-placeholder-count="3">
-                          <div onClick="{{ opt.onClick }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};cursor:{{ m.card.cursor }};">
-                            <span style="width:16px;height:16px;border-radius:50%;flex:none;box-sizing:border-box;border:2px solid {{ opt.dotBorder }};display:flex;align-items:center;justify-content:center;">
-                              <span style="width:8px;height:8px;border-radius:50%;background:{{ opt.dotFill }};"></span>
-                            </span>
-                            <span class="robin-body" style="color:var(--text-primary);">{{ opt.label }}</span>
-                          </div>
-                        </sc-for>
+                      <label class="rb-field__label">How should we optimize your seating plan?</label>
+                      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+                        <div class="robin-body" style="text-align:center;color:var(--text-muted);font-weight:var(--fw-medium);">{{ m.card.seatingBalanceLabel }}</div>
+                        <input type="range" min="0" max="100" step="1" value="{{ m.card.seatingBalance }}" onChange="{{ m.card.onSeatingBalanceChange }}" class="rb-opt-slider" style="width:100%;cursor:{{ m.card.cursor }};--rb-opt-pct:{{ m.card.seatingBalancePct }};">
+                        <div style="display:flex;justify-content:space-between;gap:12px;">
+                          <span class="robin-caption">Optimize for constrained space</span>
+                          <span class="robin-caption" style="text-align:right;">Optimize for employee flexibility</span>
+                        </div>
                       </div>
                     </div>
 
                     <div class="rb-field">
                       <label class="rb-field__label">Do you plan to have most people assigned to desks, or more of a hybrid work culture?</label>
                       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-                        <sc-for list="{{ m.card.workCultureOptions }}" as="opt" hint-placeholder-count="5">
-                          <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="{{ opt.variant }}" onClick="{{ opt.onClick }}" hint-size="auto,32px">{{ opt.label }}</x-import>
+                        <sc-for list="{{ m.card.workCultureOptions }}" as="opt" hint-placeholder-count="3">
+                          <div onClick="{{ opt.onClick }}" style="padding:8px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};color:{{ opt.color }};font-family:var(--font-brand);font-size:var(--fs-base);font-weight:var(--fw-medium);cursor:{{ m.card.cursor }};">{{ opt.label }}</div>
+                        </sc-for>
+                      </div>
+                    </div>
+
+                    <div class="rb-field">
+                      <label class="rb-field__label">Can users book desks outside their neighborhood?</label>
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+                        <sc-for list="{{ m.card.neighborhoodBookingOptions }}" as="opt" hint-placeholder-count="2">
+                          <div onClick="{{ opt.onClick }}" style="padding:8px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};color:{{ opt.color }};font-family:var(--font-brand);font-size:var(--fs-base);font-weight:var(--fw-medium);cursor:{{ m.card.cursor }};">{{ opt.label }}</div>
                         </sc-for>
                       </div>
                     </div>
@@ -246,14 +281,27 @@
                       </div>
                     </div>
 
+                    <div class="rb-field">
+                      <label class="rb-field__label">Move meetings when onsite attendees are under 25% of room capacity?</label>
+                      <div class="robin-caption" style="margin-top:4px;">Robin can relocate them to a right-sized room automatically.</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+                        <sc-for list="{{ m.card.meetingRightSizeOptions }}" as="opt" hint-placeholder-count="2">
+                          <div onClick="{{ opt.onClick }}" style="padding:8px 12px;border-radius:8px;border:1px solid {{ opt.border }};background:{{ opt.bg }};color:{{ opt.color }};font-family:var(--font-brand);font-size:var(--fs-base);font-weight:var(--fw-medium);cursor:{{ m.card.cursor }};">{{ opt.label }}</div>
+                        </sc-for>
+                      </div>
+                    </div>
+
                     <sc-if value="{{ m.card.showActions }}" hint-placeholder-val="{{ true }}">
                       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
                         <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="primary" onClick="{{ m.card.onSave }}" hint-size="auto,32px">Save settings</x-import>
-                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ m.card.onSkip }}" hint-size="auto,32px">Maybe later</x-import>
+                        <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="default" onClick="{{ m.card.onSkip }}" hint-size="auto,32px">Skip settings</x-import>
                       </div>
                     </sc-if>
-                    <sc-if value="{{ m.card.isDone }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ m.card.isSaved }}" hint-placeholder-val="{{ false }}">
                       <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="success" dot="{{ true }}" hint-size="auto,22px">Settings saved</x-import>
+                    </sc-if>
+                    <sc-if value="{{ m.card.isSkipped }}" hint-placeholder-val="{{ false }}">
+                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Tag" variant="default" hint-size="auto,22px">Skipped for now</x-import>
                     </sc-if>
                   </div>
                 </x-import>
@@ -592,16 +640,17 @@ class Component extends DCLogic {
       'start-maps': () => this.startMapsFlow(),
       csv: () => this.startCsvFlow(),
       scim: () => this.startScimFlow(),
-      'scim-help': () => this.explainScim(),
       'build-out-maps': () => this.buildOutMaps(),
       'maps-images-only': () => this.mapsImagesOnly(),
+      'badge-integration': () => this.startBadgeIntegration(),
+      'calendar-sync': () => this.startCalendarSync(),
+      'all-set': () => this.finishAllSet(),
     };
     (map[action] || (() => {}))();
   }
 
   interpret(text) {
     const t = text.toLowerCase();
-    if (/what.?s scim|what is scim|scim\?/.test(t)) { this.explainScim(); return; }
     if (t.includes('csv')) { this.startCsvFlow(); return; }
     if (t.includes('scim')) { this.startScimFlow(); return; }
     if (t.includes('user')) { this.startUsersFlow(); return; }
@@ -634,14 +683,25 @@ class Component extends DCLogic {
     }
   }
 
+  seatingBalanceLabel(value) {
+    const n = Number(value);
+    if (n <= 20) return 'Prioritize constrained space';
+    if (n <= 40) return 'Lean toward constrained space';
+    if (n <= 60) return 'Balanced';
+    if (n <= 80) return 'Lean toward employee flexibility';
+    return 'Prioritize employee flexibility';
+  }
+
   offerOptimize() {
     this.pushAgent(
       "You've set up your users and maps, and you're ready to start using Robin.\n\nTo keep your office running as smoothly as possible, customize a few settings so Robin can help optimize your space and make the most of it.",
       {
         kind: 'optimize',
-        spaceStrategy: 'optimize',
+        seatingBalance: 50,
         workCulture: 'even',
+        neighborhoodBooking: 'anywhere',
         unusedPolicy: 'cancel-booking',
+        meetingRightSize: 'yes',
         done: false,
       }
     );
@@ -653,18 +713,11 @@ class Component extends DCLogic {
 
   saveOptimize(id) {
     const card = this.state.messages.find(m => m.id === id)?.card;
-    this.updateCardById(id, { done: true });
+    this.updateCardById(id, { done: true, outcome: 'saved' });
     this.setState({ optimizeDone: true }, () => {
-      const strategyLabels = {
-        expand: 'expand your space',
-        optimize: 'optimize your current space',
-        consolidate: 'consolidate or reduce your space',
-      };
       const cultureLabels = {
         primarilyAssigned: 'primarily assigned desks',
-        mostlyAssigned: 'mostly assigned desks',
-        even: 'an even split',
-        mostlyHybrid: 'mostly hybrid',
+        even: 'both assigned and hybrid',
         primarilyHybrid: 'primarily hybrid',
       };
       const unusedLabels = {
@@ -672,35 +725,68 @@ class Component extends DCLogic {
         'cancel-booking': 'will cancel individual bookings after no-shows',
         'cancel-series': 'will cancel the series after repeat no-shows',
       };
-      const strategy = strategyLabels[card?.spaceStrategy] || 'optimize your current space';
-      const culture = cultureLabels[card?.workCulture] || 'an even split';
+      const seating = this.seatingBalanceLabel(card?.seatingBalance ?? 50).toLowerCase();
+      const culture = cultureLabels[card?.workCulture] || 'both assigned and hybrid';
+      const neighborhood = card?.neighborhoodBooking === 'neighborhood'
+        ? 'neighborhood-only desk booking'
+        : 'desk booking anywhere';
       const unused = unusedLabels[card?.unusedPolicy] || 'will cancel individual bookings after no-shows';
-      this.pushAgent(`Got it — I'll treat your strategy as to ${strategy}, with ${culture}. Robin ${unused}. You can change these anytime in settings.`);
+      const meetings = card?.meetingRightSize === 'no'
+        ? "won't move underfilled meetings"
+        : 'will right-size underfilled meetings';
+      this.pushAgent(
+        `Got it — seating plan set to ${seating}, with ${culture}, and ${neighborhood}. Robin ${unused}, and ${meetings}.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or sync with your calendar so events show up in Robin.`,
+        { kind: 'chips', chips: this.nextStepChips() }
+      );
     });
   }
 
   skipOptimize(id) {
-    if (id) this.updateCardById(id, { done: true });
+    if (id) this.updateCardById(id, { done: true, outcome: 'skipped' });
     this.setState({ optimizeDone: true }, () => {
-      this.pushAgent("No problem — you can tune these optimization settings anytime later. You're all set to start using Robin.");
+      this.pushAgent(
+        "No problem — you can tune these optimization settings anytime later.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or sync with your calendar so events show up in Robin.",
+        { kind: 'chips', chips: this.nextStepChips() }
+      );
     });
+  }
+
+  nextStepChips() {
+    return [
+      { label: 'Set up badge integration', action: 'badge-integration' },
+      { label: 'Sync with calendar', action: 'calendar-sync' },
+      { label: "I'm all set for now", action: 'all-set' },
+    ];
+  }
+
+  startBadgeIntegration() {
+    this.pushAgent("Badge integration helps Robin match who was actually onsite with who booked — so attendance reporting stays accurate. You can connect your badge provider from Manage → Integrations anytime. Want to tackle calendar sync next, or call it here?", {
+      kind: 'chips',
+      chips: [
+        { label: 'Sync with calendar', action: 'calendar-sync' },
+        { label: "I'm all set for now", action: 'all-set' },
+      ],
+    });
+  }
+
+  startCalendarSync() {
+    this.pushAgent("Syncing your calendar lets people see meetings and desk bookings together in Robin. Connect Google or Microsoft 365 from Manage → Integrations whenever you're ready. Want to set up badge integration next, or wrap up?", {
+      kind: 'chips',
+      chips: [
+        { label: 'Set up badge integration', action: 'badge-integration' },
+        { label: "I'm all set for now", action: 'all-set' },
+      ],
+    });
+  }
+
+  finishAllSet() {
+    this.pushAgent("You're all set — users, maps, and your workspace preferences are ready. Jump into Robin anytime, and you can finish badge or calendar setup later from settings.");
   }
 
   // ---------- users: CSV ----------
   startUsersFlow() {
     this.pushAgent(
       "Let's add your users. The best long-term option is connecting via SCIM, so changes in your HR system sync automatically — but a CSV works great to get started, and you can connect SCIM later.",
-      { kind: 'chips', chips: [
-        { label: 'Upload a CSV', action: 'csv' },
-        { label: 'Connect via SCIM', action: 'scim' },
-        { label: "What's SCIM?", action: 'scim-help' },
-      ] }
-    );
-  }
-
-  explainScim() {
-    this.pushAgent(
-      "SCIM (System for Cross-domain Identity Management) is a standard your identity provider — like Okta, Azure AD, or Google Workspace — uses to keep Robin's directory in sync automatically. New hires, role changes, and departures flow in without manual re-uploads.",
       { kind: 'chips', chips: [
         { label: 'Upload a CSV', action: 'csv' },
         { label: 'Connect via SCIM', action: 'scim' },
@@ -899,7 +985,7 @@ class Component extends DCLogic {
     this.pushAgent('Want me to save you some time and automatically create those assets and details of each map?', {
       kind: 'chips',
       chips: [
-        { label: 'Yes, build out my maps', action: 'build-out-maps' },
+        { label: 'Yes, build out my maps', action: 'build-out-maps', variant: 'primary' },
         { label: 'No just add the map image', action: 'maps-images-only' },
       ],
     });
@@ -977,44 +1063,51 @@ class Component extends DCLogic {
 
       if (card.kind === 'chips') {
         view.isChips = true;
-        view.card = { chips: card.chips.map(c => ({ label: c.label, onClick: () => this.onChipClick(c) })) };
+        view.card = { chips: card.chips.map(c => ({ label: c.label, variant: c.variant || 'default', onClick: () => this.onChipClick(c) })) };
       } else if (card.kind === 'optimize') {
         view.isOptimize = true;
         const pickStyle = (selected) => ({
-          border: selected ? 'var(--blue-4, #2774c1)' : 'var(--border-default)',
-          bg: selected ? 'var(--blue-0, #F0F7FF)' : 'var(--surface-card, #fff)',
-          dotBorder: selected ? 'var(--blue-4, #2774c1)' : 'var(--border-strong, #868686)',
-          dotFill: selected ? 'var(--blue-4, #2774c1)' : 'transparent',
+          border: selected ? 'var(--blue-5, #4A91CF)' : 'var(--border-default)',
+          bg: selected ? 'var(--blue-1, #F0FAFF)' : 'var(--surface-card, #fff)',
+          color: selected ? 'var(--blue-7, #17559C)' : 'var(--text-primary)',
+          dotBorder: selected ? 'var(--blue-5, #4A91CF)' : 'var(--border-strong, #868686)',
+          dotFill: selected ? 'var(--blue-5, #4A91CF)' : 'transparent',
         });
         const locked = !!card.done;
         const choose = (field, value) => () => { if (!locked) this.setOptimizeField(m.id, field, value); };
+        const seatingBalance = card.seatingBalance ?? 50;
         view.card = {
           cursor: locked ? 'default' : 'pointer',
           showActions: !locked,
-          isDone: locked,
+          isSaved: locked && card.outcome === 'saved',
+          isSkipped: locked && card.outcome === 'skipped',
           onSave: () => this.saveOptimize(m.id),
           onSkip: () => this.skipOptimize(m.id),
-          spaceStrategyOptions: [
-            { value: 'expand', label: 'Expand our space' },
-            { value: 'optimize', label: 'Optimize our current space' },
-            { value: 'consolidate', label: 'Consolidate or reduce our space' },
-          ].map(o => ({ ...o, ...pickStyle(card.spaceStrategy === o.value), onClick: choose('spaceStrategy', o.value) })),
+          seatingBalance,
+          seatingBalancePct: `${seatingBalance}%`,
+          seatingBalanceLabel: this.seatingBalanceLabel(seatingBalance),
+          onSeatingBalanceChange: (e) => {
+            if (locked) return;
+            this.setOptimizeField(m.id, 'seatingBalance', Number(e.target.value));
+          },
           workCultureOptions: [
             { value: 'primarilyAssigned', label: 'Primarily assigned' },
-            { value: 'mostlyAssigned', label: 'Mostly assigned' },
-            { value: 'even', label: 'Even split' },
-            { value: 'mostlyHybrid', label: 'Mostly hybrid' },
+            { value: 'even', label: 'Both' },
             { value: 'primarilyHybrid', label: 'Primarily hybrid' },
-          ].map(o => ({
-            ...o,
-            variant: card.workCulture === o.value ? 'primary' : 'default',
-            onClick: choose('workCulture', o.value),
-          })),
+          ].map(o => ({ ...o, ...pickStyle(card.workCulture === o.value), onClick: choose('workCulture', o.value) })),
+          neighborhoodBookingOptions: [
+            { value: 'anywhere', label: 'Yes, anywhere' },
+            { value: 'neighborhood', label: 'No, neighborhood only' },
+          ].map(o => ({ ...o, ...pickStyle(card.neighborhoodBooking === o.value), onClick: choose('neighborhoodBooking', o.value) })),
           unusedPolicyOptions: [
             { value: 'nothing', label: 'Do nothing' },
             { value: 'cancel-booking', label: 'Cancel the individual bookings after no-shows' },
             { value: 'cancel-series', label: 'Cancel the series after repeat no-shows' },
           ].map(o => ({ ...o, ...pickStyle(card.unusedPolicy === o.value), onClick: choose('unusedPolicy', o.value) })),
+          meetingRightSizeOptions: [
+            { value: 'yes', label: 'Yes, right-size' },
+            { value: 'no', label: 'No, leave as booked' },
+          ].map(o => ({ ...o, ...pickStyle(card.meetingRightSize === o.value), onClick: choose('meetingRightSize', o.value) })),
         };
       } else if (card.kind === 'csv') {
         view.isCsv = true;

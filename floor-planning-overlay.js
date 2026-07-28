@@ -59,7 +59,7 @@
                 <svg viewBox="0 0 384 512" width="12" height="12"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
               </button>
               <div class="fp-notice-title">Your floors are ready</div>
-              <div class="fp-notice-body">We set up all your floors from the maps you uploaded — drew the walls, assigned users, and built neighborhoods. Make adjustments here now, or come back anytime later.</div>
+              <div class="fp-notice-body">We set up all your floors from the maps you uploaded. We defined walls, placed desks and spaces, assigned users, and built neighborhoods.<br><br>You can make adjustments here now, or come back anytime later.</div>
             </div>
           </main>
           <aside class="fp-right">
