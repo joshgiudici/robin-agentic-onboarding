@@ -229,7 +229,12 @@
               <sc-if value="{{ m.isChips }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;flex-wrap:wrap;gap:8px;">
                   <sc-for list="{{ m.card.chips }}" as="chip" hint-placeholder-count="2">
-                    <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="{{ chip.variant }}" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
+                    <sc-if value="{{ chip.isStatic }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:4px;border:1px solid var(--border-default);background:var(--surface-card);font-family:var(--font-brand);font-size:var(--fs-base);font-weight:var(--fw-medium);color:var(--text-primary);cursor:default;">{{ chip.label }}</div>
+                    </sc-if>
+                    <sc-if value="{{ !chip.isStatic }}" hint-placeholder-val="{{ true }}">
+                      <x-import component-from-global-scope="RobinDesignSystem_2b6e7b.Button" variant="{{ chip.variant }}" onClick="{{ chip.onClick }}" hint-size="auto,32px">{{ chip.label }}</x-import>
+                    </sc-if>
                   </sc-for>
                 </div>
               </sc-if>
@@ -642,9 +647,6 @@ class Component extends DCLogic {
       scim: () => this.startScimFlow(),
       'build-out-maps': () => this.buildOutMaps(),
       'maps-images-only': () => this.mapsImagesOnly(),
-      'badge-integration': () => this.startBadgeIntegration(),
-      'calendar-sync': () => this.startCalendarSync(),
-      'all-set': () => this.finishAllSet(),
     };
     (map[action] || (() => {}))();
   }
@@ -735,7 +737,7 @@ class Component extends DCLogic {
         ? "won't move underfilled meetings"
         : 'will right-size underfilled meetings';
       this.pushAgent(
-        `Got it — seating plan set to ${seating}, with ${culture}, and ${neighborhood}. Robin ${unused}, and ${meetings}.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or sync with your calendar so events show up in Robin.`,
+        `Got it — seating plan set to ${seating}, with ${culture}, and ${neighborhood}. Robin ${unused}, and ${meetings}.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or connect to your calendar so events show up in Robin.`,
         { kind: 'chips', chips: this.nextStepChips() }
       );
     });
@@ -745,7 +747,7 @@ class Component extends DCLogic {
     if (id) this.updateCardById(id, { done: true, outcome: 'skipped' });
     this.setState({ optimizeDone: true }, () => {
       this.pushAgent(
-        "No problem — you can tune these optimization settings anytime later.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or sync with your calendar so events show up in Robin.",
+        "No problem — you can tune these optimization settings anytime later.\n\nWhat would you like to do next? A couple of high-impact follow-ups: set up badge integration to improve attendance reporting, or connect to your calendar so events show up in Robin.",
         { kind: 'chips', chips: this.nextStepChips() }
       );
     });
@@ -753,34 +755,9 @@ class Component extends DCLogic {
 
   nextStepChips() {
     return [
-      { label: 'Set up badge integration', action: 'badge-integration' },
-      { label: 'Sync with calendar', action: 'calendar-sync' },
-      { label: "I'm all set for now", action: 'all-set' },
+      { label: 'Set up badge integration', static: true },
+      { label: 'Connect to calendar', static: true },
     ];
-  }
-
-  startBadgeIntegration() {
-    this.pushAgent("Badge integration helps Robin match who was actually onsite with who booked — so attendance reporting stays accurate. You can connect your badge provider from Manage → Integrations anytime. Want to tackle calendar sync next, or call it here?", {
-      kind: 'chips',
-      chips: [
-        { label: 'Sync with calendar', action: 'calendar-sync' },
-        { label: "I'm all set for now", action: 'all-set' },
-      ],
-    });
-  }
-
-  startCalendarSync() {
-    this.pushAgent("Syncing your calendar lets people see meetings and desk bookings together in Robin. Connect Google or Microsoft 365 from Manage → Integrations whenever you're ready. Want to set up badge integration next, or wrap up?", {
-      kind: 'chips',
-      chips: [
-        { label: 'Set up badge integration', action: 'badge-integration' },
-        { label: "I'm all set for now", action: 'all-set' },
-      ],
-    });
-  }
-
-  finishAllSet() {
-    this.pushAgent("You're all set — users, maps, and your workspace preferences are ready. Jump into Robin anytime, and you can finish badge or calendar setup later from settings.");
   }
 
   // ---------- users: CSV ----------
@@ -1063,7 +1040,14 @@ class Component extends DCLogic {
 
       if (card.kind === 'chips') {
         view.isChips = true;
-        view.card = { chips: card.chips.map(c => ({ label: c.label, variant: c.variant || 'default', onClick: () => this.onChipClick(c) })) };
+        view.card = {
+          chips: card.chips.map(c => ({
+            label: c.label,
+            variant: c.variant || 'default',
+            isStatic: !!c.static,
+            onClick: c.static ? undefined : () => this.onChipClick(c),
+          })),
+        };
       } else if (card.kind === 'optimize') {
         view.isOptimize = true;
         const pickStyle = (selected) => ({
